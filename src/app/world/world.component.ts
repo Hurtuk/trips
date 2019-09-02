@@ -11,7 +11,7 @@ export class WorldComponent implements OnInit {
   constructor(private chartService: ChartService) { }
 
   ngOnInit() {
-    this.chartService.buildTheWorld();
+    this.chartService.buildTheWorld('world');
   }
 
 }

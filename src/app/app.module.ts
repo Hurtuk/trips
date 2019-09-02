@@ -10,13 +10,17 @@ import { AppComponent } from './app.component';
 import { ModalComponent } from './modal.component';
 import { TripSummaryComponent } from './modals/trip-summary/trip-summary.component';
 import { WorldComponent } from './world/world.component';
+import { CountrySummaryComponent } from './modals/country-summary/country-summary.component';
+import { HttpClientModule } from '@angular/common/http';
+import { UrlBuilderService } from './services/url-builder.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     ModalComponent,
     TripSummaryComponent,
-    WorldComponent
+    WorldComponent,
+    CountrySummaryComponent
   ],
   imports: [
     BrowserModule,
@@ -24,12 +28,16 @@ import { WorldComponent } from './world/world.component';
     BrowserAnimationsModule,
     MatButtonModule,
     MatCheckboxModule,
-    MatDialogModule
+    MatDialogModule,
+    HttpClientModule
   ],
   entryComponents: [
-    TripSummaryComponent
+    TripSummaryComponent,
+    CountrySummaryComponent
   ],
-  providers: [],
+  providers: [
+    UrlBuilderService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
