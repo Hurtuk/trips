@@ -26,26 +26,23 @@ export class ModalComponent implements OnDestroy {
       let component: any;
       if (router.url.indexOf('country') !== -1) {
         component = CountrySummaryComponent;
-        // Take the country code
       } else if (router.url.indexOf('city') !== -1) {
         component = CitySummaryComponent;
-        // Take the city id
       } else {
         component = TripSummaryComponent;
-        // Take the trip id
       }
 
       // When router navigates on this component is takes the params and opens up the photo detail modal
       this.currentDialog = this.modalService.open(component, {
         width: '1000px',
-        minHeight: '500px',
+        height: '600px',
         maxWidth: '90vw',
         maxHeight: '90vh'
       });
       (this.currentDialog.componentInstance as SummaryModal).initFromId(params.id);
 
       // Go back to home page after the modal is closed
-      this.currentDialog.afterClosed().subscribe(result => {
+      this.currentDialog.afterClosed().subscribe(() => {
           router.navigateByUrl('/');
       }, () => {
           router.navigateByUrl('/');

@@ -21,7 +21,7 @@ export class CountrySummaryComponent implements SummaryModal {
   ) { }
 
   public initFromId(id: string): void {
-    this.chartService.buildCountry('aside', id);
+    this.chartService.buildCountry(this, 'aside', id);
     this.tripService.getCountryByCode(id)
       .subscribe(c => this.entity = c);
     this.tripService.getSimpleTrips('country', id)
@@ -29,7 +29,7 @@ export class CountrySummaryComponent implements SummaryModal {
   }
 
   public ngOnDestroy() {
-    this.chartService.disposeTempChart();
+    this.chartService.disposeTempChart(this);
   }
 
 }

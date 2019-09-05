@@ -1,20 +1,18 @@
-<h3>{{ trip.title }}</h3>
-<h4>{{ trip.cities }}</h4>
-<div>
-    <span class="calendar">
-        <i class="material-icons">calendar_today</i>
-        {{ trip.dates }}
-    </span>
-    <span class="people" [title]="trip.peopleNb > 1 ? trip.peopleNb + ' personnes': 'Solitaire'">
-        <i *ngFor="let i of array(trip.peopleNb)" class="material-icons">person</i>
-    </span>
-</div>
-<div>
-    <span *ngIf="trip.transports" class="transports">
-        <img *ngFor="let transport of trip.transports" src="assets/icons/{{ transport }}" />
-    </span>
-    <span *ngIf="trip.chaptersNb" class="chapters">
-        {{ trip.chaptersNb }} chapitre{{ trip.chaptersNb > 1 ? 's': '' }}
-        <i class="material-icons">keyboard_arrow_right</i>
-    </span>
-</div>
+<a [routerLink]="'/trip/' + trip.id">
+    <h3>{{ trip.title }}</h3>
+    <h4>{{ trip.cities }}</h4>
+    <div>
+        <span class="calendar">
+            <i class="material-icons">calendar_today</i>
+            {{ trip.dates }}
+        </span>
+        <span class="people" [title]="trip.peopleNb > 1 ? trip.peopleNb + ' personnes': 'Solitaire'">
+            <ng-container *ngIf="trip.peopleNb < 5">
+                <i *ngFor="let i of array(trip.peopleNb)" class="material-icons">person</i>
+            </ng-container>
+            <ng-container *ngIf="trip.peopleNb >= 5">
+                <span>{{trip.peopleNb}}</span><i class="material-icons">person</i>
+            </ng-container>
+        </span>
+    </div>
+</a>

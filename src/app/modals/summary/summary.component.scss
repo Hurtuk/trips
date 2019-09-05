@@ -2,12 +2,85 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    margin: -24px;
+    position: relative;
+    padding: 5px 15px 15px;
+    background-color: #653711;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 5px;
+        left: 15px;
+        bottom: 15px;
+        right: 15px;
+        background: transparent url(../../../assets/summary-background.jpg) no-repeat center center;
+        background-size: cover;
+        z-index: 0;
+    }
+
+    > * {
+        position: relative;
+    }
+}
+
+#aside {
+    text-align: center;
+}
+
+.photo {
+    transform: rotate(-.5deg);
+    text-align: center;
+    margin-top: 36px;
+    display: inline-block;
+
+    img {
+        max-width: 90%;
+    }
+
+    &::before {
+        content: '';
+        display: block;
+        width: 90px;
+        height: 25px;
+        background-color: rgba(255, 255, 255, .5);
+        position: absolute;
+        transform: rotate(-30deg);
+        top: -3px;
+    }
+
+    &::after {
+        content: '';
+        display: block;
+        width: 90px;
+        height: 25px;
+        background-color: rgba(255, 255, 255, .5);
+        position: absolute;
+        transform: rotate(-1deg);
+        bottom: -11px;
+        right: 16%;
+    }
 }
 
 h1 {
     margin: 0;
     text-transform: uppercase;
     text-align: center;
+    font-family: 'Amatic SC', cursive;
+    font-weight: bold;
+    font-size: 3.5em;
+    margin-top: -15px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    margin: 0;
+    text-transform: uppercase;
+    text-align: center;
+    font-family: 'Amatic SC', cursive;
+    font-size: 1.5em;
+    margin-top: -15px;
+    margin-bottom: 20px;
 }
 
 section {
@@ -15,14 +88,11 @@ section {
     display: flex;
     flex-direction: row;
     overflow: hidden;
+    box-shadow: 0px 4px 10px 0px black;
 
     > div {
         flex: 1;
         padding: 30px;
-
-        &#aside {
-            max-width: 400px;
-        }
 
         &#trips {
             overflow: auto;

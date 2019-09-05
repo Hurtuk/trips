@@ -1,7 +1,12 @@
-<h1>{{entity?.name}}</h1>
 <section>
-    <div id="aside"></div>
+    <div id="aside">
+        <div *ngIf="photoUrl" class="photo">
+            <img [src]="photoUrl" />
+        </div>
+    </div>
     <div id="trips">
+        <h1>{{entity?.name}}</h1>
+        <h2 *ngIf="entity?.country">{{entity.country.name}}</h2>
         <app-trip-recap *ngFor="let trip of trips" [trip]="trip"></app-trip-recap>
     </div>
 </section>

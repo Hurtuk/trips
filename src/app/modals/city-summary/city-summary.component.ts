@@ -14,22 +14,31 @@ export class CitySummaryComponent implements SummaryModal {
 
   public entity: City;
   public trips: SimpleTrip[];
+  public photoUrl: string;
 
   constructor(
     private chartService: ChartService,
     private tripService: TripService
   ) { }
 
-  public initFromId(id: string): void {
-    /*this.chartService.buildCountry('aside', id);
-    this.tripService.getCountryByCode(id)
-      .subscribe(c => this.entity = c);*/
-    this.tripService.getSimpleTrips('city', id)
+  public initFromId(idStr: string): void {
+    const id = parseInt(idStr);
+    this.tripService.getCityPhoto(id)
+      .subscribe(url => {
+        if (url.length < 4) {
+          this.chartService.buildCountry(this, 'aside', url);
+        } else {
+          this.photoUrl = url;
+        }
+      });
+    this.tripService.getCityById(id)
+      .subscribe(c => this.entity = c);
+    this.tripService.getSimpleTrips('city', idStr)
       .subscribe(t => this.trips = t);
   }
 
   public ngOnDestroy() {
-    //this.chartService.disposeTempChart();
+    this.chartService.disposeTempChart(this);
   }
 
 }

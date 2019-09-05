@@ -5,7 +5,7 @@ import { City } from '../model/city';
 import { HttpClient } from '@angular/common/http';
 import { UrlBuilderService } from './url-builder.service';
 import { SimpleTrip } from '../model/simple-trip';
-import { map } from 'rxjs/operators';
+import { Trip } from '../model/trip';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +29,19 @@ export class TripService {
     return this.http.get<Country>(this.urlBuilder.buildUrl('getCountryByCode', code));
   }
 
+  public getCityById(id: number): Observable<City> {
+    return this.http.get<City>(this.urlBuilder.buildUrl('getCityById', id));
+  }
+
   public getSimpleTrips(type: string, id: string): Observable<SimpleTrip[]> {
     return this.http.get<SimpleTrip[]>(this.urlBuilder.buildUrl('getSimpleTrips', type, id));
+  }
+
+  public getCityPhoto(cityId: number): Observable<string> {
+    return this.http.get<string>(this.urlBuilder.buildUrl('getCityPhoto', cityId));
+  }
+
+  public getTripById(id: number): Observable<Trip> {
+    return this.http.get<Trip>(this.urlBuilder.buildUrl('getTripById', id));
   }
 }

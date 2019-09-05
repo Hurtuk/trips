@@ -1,1 +1,29 @@
-Test
+<section>
+    <div *ngIf="trip" id="page-left">
+        <h1>{{trip.title}}</h1>
+        <h2>{{citiesToString()}}</h2>
+        <div class="columns">
+            <span class="calendar">
+                <i class="material-icons">calendar_today</i>
+                {{ trip.dates }}
+            </span>
+            <span class="people" [title]="trip.peopleNb > 1 ? trip.peopleNb + ' personnes': 'Solitaire'">
+                <ng-container *ngIf="trip.peopleNb < 5">
+                    <i *ngFor="let i of array(trip.peopleNb)" class="material-icons">person</i>
+                </ng-container>
+                <ng-container *ngIf="trip.peopleNb >= 5">
+                    <span>{{trip.peopleNb}}</span><i class="material-icons">person</i>
+                </ng-container>
+            </span>
+        </div>
+        <div>
+            <img src="assets/icons/{{t}}" *ngFor="let t of getTransports()" />
+        </div>
+    </div>
+    <div id="page-right">
+        TODO
+        <!--<h1>{{entity?.name}}</h1>
+        <h2 *ngIf="entity?.country">{{entity.country.name}}</h2>
+        <app-trip-recap *ngFor="let trip of trips" [trip]="trip"></app-trip-recap>-->
+    </div>
+</section>

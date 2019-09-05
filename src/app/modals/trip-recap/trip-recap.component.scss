@@ -1,34 +1,53 @@
 :host {
     display: block;
-    box-shadow: 0 5px 10px -4px grey;
-    padding: 10px;
-    font-size: .9em;
-    background-color: #fff9ef;
-    transition: background-color .2s;
-    cursor: pointer;
 
-    &:hover {
-        background-color: #f8ead1;
+    > a {
+        display: block;
+        border-bottom: 1px solid rgba(0, 0, 0, .125);
+        background-color: rgba(0, 0, 0, .03);
+        padding: 5px;
+        box-shadow: -4px 4px 0px -1px rgba(0, 0, 0, 0.5);
+        text-decoration: none;
+        color: #f0e7e0;
+        outline: 0;
+        background-color: rgba(86, 49, 18, .8);
+        transform: rotate(-1deg);
+        font-family: 'Caveat', cursive;
+        font-size: .9em;
+        position: relative;
+        transition: top .2s, left .2s;
+
+        &:hover {
+            top: 1px;
+            left: -1px;
+            box-shadow: -3px 3px 0px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        &:active {
+            top: 2px;
+            left: -2px;
+            box-shadow: -2px 2px 0px -1px rgba(0, 0, 0, 0.5);
+        }
     }
 }
 
 h3 {
     margin: 0;
     text-align: center;
-    text-transform: uppercase;
-    letter-spacing: -1px;
+    font-size: 2em;
 }
 
 h4 {
     margin: 0;
     text-align: center;
     font-weight: normal;
-    font-style: italic;
     margin-bottom: 20px;
+    margin-top: -5px;
+    font-size: 1.5em;
 }
 
 i {
-    vertical-align: middle;
+    vertical-align: sub;
 }
 
 img {
@@ -44,8 +63,15 @@ div {
     justify-content: space-between;
 }
 
+.calendar {
+    font-size: 1.4em;
+}
+
 .people {
     i {
-        margin-left: -15px;
+        margin-left: -12px;
+    }
+    span + i {
+        margin-left: 0;
     }
 }

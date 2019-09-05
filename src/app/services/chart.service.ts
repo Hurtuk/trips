@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { TripService } from './trip.service';
 import { City } from '../model/city';
 import { BehaviorSubject } from 'rxjs';
+import { SummaryModal } from '../modals/summary-modal';
 
 am4core.useTheme(am4themes_animated);
 
@@ -21,7 +22,7 @@ export class ChartService {
   private VISITED_COLOR = am4core.color("#ffd06d");
   private FULL_VISITED_COLOR = am4core.color("#f29d00");
   private visitedCities: BehaviorSubject<City[]> = new BehaviorSubject([]);
-  private tempChart: am4maps.MapChart;
+  private tempChart = new Map<SummaryModal, am4maps.MapChart>();
 
   constructor(
     private zone: NgZone,
@@ -29,8 +30,10 @@ export class ChartService {
     private tripService: TripService
   ) { }
 
-  public disposeTempChart() {
-    this.tempChart.dispose();
+  public disposeTempChart(modal: SummaryModal) {
+    if (this.tempChart.get(modal)) {
+      this.tempChart.get(modal).dispose();
+    }
   }
 
   /**
@@ -48,26 +51,29 @@ export class ChartService {
   /**
    * Creates the country map for country-summary
    */
-  public buildCountry(elementId: string, countryCode: string) {
+  public buildCountry(modal: SummaryModal, elementId: string, countryCode: string) {
     this.zone.runOutsideAngular(() => {
       // Create the chart
-      this.tempChart = am4core.create(elementId, am4maps.MapChart);
-      this.tempChart.language.locale = am4lang_fr_FR.default;
-      this.tempChart.projection = new am4maps.projections.Miller();
+      const chart = am4core.create(elementId, am4maps.MapChart);
+      this.tempChart.set(modal, chart);
+      chart.language.locale = am4lang_fr_FR.default;
+      chart.projection = new am4maps.projections.Miller();
       // Colors
-      this.tempChart.background.fillOpacity = 1;
-      // Create the data and exclude Antarctica
-      this.tempChart.geodata = am4geodata_worldHigh;
+      chart.background.fillOpacity = 0;
+      // Create the data
+      chart.geodata = am4geodata_worldHigh;
       const polygonSeries = new am4maps.MapPolygonSeries();
       polygonSeries.useGeodata = true;
       // Fill the data
       polygonSeries.include = [countryCode];
-      // Set the style of visited countries
-      const polygonTemplate = polygonSeries.mapPolygons.template;
-      polygonTemplate.propertyFields.fill = "fill";
-      this.tempChart.series.push(polygonSeries);
+      // Color
+      let polygonTemplate = polygonSeries.mapPolygons.template;
+      polygonTemplate.fill = am4core.color("#9F774A");
+      polygonTemplate.stroke = am4core.color("#7c5b36");
+      polygonTemplate.strokeWidth = 3;
+      chart.series.push(polygonSeries);
       // Generate the cities
-      const imageSeries = this.tempChart.series.push(new am4maps.MapImageSeries());
+      const imageSeries = chart.series.push(new am4maps.MapImageSeries());
       const imageSeriesTemplate = imageSeries.mapImages.template;
       const circle = imageSeriesTemplate.createChild(am4core.Circle);
       circle.radius = 10;
