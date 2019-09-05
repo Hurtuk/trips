@@ -13,6 +13,8 @@ import { WorldComponent } from './world/world.component';
 import { CountrySummaryComponent } from './modals/country-summary/country-summary.component';
 import { HttpClientModule } from '@angular/common/http';
 import { UrlBuilderService } from './services/url-builder.service';
+import { TripRecapComponent } from './modals/trip-recap/trip-recap.component';
+import { CitySummaryComponent } from './modals/city-summary/city-summary.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import { UrlBuilderService } from './services/url-builder.service';
     ModalComponent,
     TripSummaryComponent,
     WorldComponent,
-    CountrySummaryComponent
+    CountrySummaryComponent,
+    TripRecapComponent,
+    CitySummaryComponent
   ],
   imports: [
     BrowserModule,
@@ -33,7 +37,8 @@ import { UrlBuilderService } from './services/url-builder.service';
   ],
   entryComponents: [
     TripSummaryComponent,
-    CountrySummaryComponent
+    CountrySummaryComponent,
+    CitySummaryComponent
   ],
   providers: [
     UrlBuilderService

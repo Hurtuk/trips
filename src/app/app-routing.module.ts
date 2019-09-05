@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: 'country/:id',
     component: ModalComponent
+  },
+  {
+    path: 'city/:id',
+    component: ModalComponent
   }
 ];
 

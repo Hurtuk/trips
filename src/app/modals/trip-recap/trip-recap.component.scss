@@ -1,0 +1,51 @@
+:host {
+    display: block;
+    box-shadow: 0 5px 10px -4px grey;
+    padding: 10px;
+    font-size: .9em;
+    background-color: #fff9ef;
+    transition: background-color .2s;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #f8ead1;
+    }
+}
+
+h3 {
+    margin: 0;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+}
+
+h4 {
+    margin: 0;
+    text-align: center;
+    font-weight: normal;
+    font-style: italic;
+    margin-bottom: 20px;
+}
+
+i {
+    vertical-align: middle;
+}
+
+img {
+    width: 36px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: -10px;
+}
+
+div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.people {
+    i {
+        margin-left: -15px;
+    }
+}

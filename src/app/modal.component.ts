@@ -7,6 +7,7 @@ import { TripSummaryComponent } from './modals/trip-summary/trip-summary.compone
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CountrySummaryComponent } from './modals/country-summary/country-summary.component';
 import { SummaryModal } from './modals/summary-modal';
+import { CitySummaryComponent } from './modals/city-summary/city-summary.component';
 
 @Component({
   selector: 'app-modal',
@@ -27,7 +28,7 @@ export class ModalComponent implements OnDestroy {
         component = CountrySummaryComponent;
         // Take the country code
       } else if (router.url.indexOf('city') !== -1) {
-        component = TripSummaryComponent;
+        component = CitySummaryComponent;
         // Take the city id
       } else {
         component = TripSummaryComponent;
@@ -36,8 +37,10 @@ export class ModalComponent implements OnDestroy {
 
       // When router navigates on this component is takes the params and opens up the photo detail modal
       this.currentDialog = this.modalService.open(component, {
-        height: '400px',
-        width: '600px',
+        width: '1000px',
+        minHeight: '500px',
+        maxWidth: '90vw',
+        maxHeight: '90vh'
       });
       (this.currentDialog.componentInstance as SummaryModal).initFromId(params.id);
 

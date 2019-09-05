@@ -1,0 +1,7 @@
+<h1>{{entity?.name}}</h1>
+<section>
+    <div id="aside"></div>
+    <div id="trips">
+        <app-trip-recap *ngFor="let trip of trips" [trip]="trip"></app-trip-recap>
+    </div>
+</section>

@@ -7,7 +7,6 @@ import am4geodata_worldLow from "@amcharts/amcharts4-geodata/worldLow";
 import am4geodata_worldHigh from "@amcharts/amcharts4-geodata/worldHigh";
 import { Router } from '@angular/router';
 import { TripService } from './trip.service';
-import { Country } from '../model/country';
 import { City } from '../model/city';
 import { BehaviorSubject } from 'rxjs';
 
@@ -110,12 +109,12 @@ export class ChartService {
       this.zone.run(() => {
         const count = ev.target.dataItem.dataContext['value'];
         const id = ev.target.dataItem.dataContext['id'];
-        if (count > 1) {
+        //if (count > 1) {
           this.route.navigate(['country/' + id]);
-        } else if (count === 1) {
+        //} else if (count === 1) {
           // TODO get the only trip id
           // this.route.navigate(['trip/' + ev.target.dataItem.dataContext['id']]);
-        }
+        //}
       })
     );
     map.series.push(polygonSeries);
@@ -140,12 +139,12 @@ export class ChartService {
       this.zone.run(() => {
         const count = ev.target.dataItem.dataContext['value'];
         const id = ev.target.dataItem.dataContext['id'];
-        if (count > 1) {
+        //if (count > 1) {
           this.route.navigate(['city/' + id]);
-        } else if (count === 1) {
+        //} else if (count === 1) {
           // TODO get the only trip id
           // this.route.navigate(['trip/' + ev.target.dataItem.dataContext['id']]);
-        }
+        //}
       })
     );
     this.loadCitiesData(imageSeries);
