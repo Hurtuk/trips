@@ -184,7 +184,6 @@ export class ChartService {
       } else if (countriesNb > 1) {
         // Display zoomed world on visited countries
         chart.projection = new am4maps.projections.Miller();
-        // TODO zoom
         chart.homeZoomLevel = 5;
         chart.homeGeoPoint = {
           latitude: this.average([stays.startFrom.latitude, ...stays.visits.map(v => v.latitude)]),

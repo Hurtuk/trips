@@ -14,6 +14,7 @@ export class TripSummaryComponent implements SummaryModal {
 
   public trip: Trip;
   public chapters: Chapter[];
+  public currentPage: number;
 
   constructor(
     private chartService: ChartService,
