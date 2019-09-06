@@ -64,6 +64,7 @@ section {
         margin-top: -15px;
         margin-bottom: 10px;
         letter-spacing: -1px;
+        line-height: 1em;
     }
 
     h2 {
@@ -78,5 +79,40 @@ section {
 
     #global-map {
         flex: 1;
+    }
+}
+
+.transports {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    img {
+        max-width: 45px;
+        margin: 0 5px;
+    }
+}
+
+i {
+    vertical-align: sub;
+}
+
+.columns {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.calendar {
+    font-size: 1.4em;
+    font-family: 'Caveat', cursive;
+}
+
+.people {
+    i {
+        margin-left: -12px;
+    }
+    span + i {
+        margin-left: 0;
     }
 }

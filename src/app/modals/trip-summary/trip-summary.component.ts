@@ -3,6 +3,7 @@ import { SummaryModal } from '../summary-modal';
 import { ChartService } from 'src/app/services/chart.service';
 import { TripService } from 'src/app/services/trip.service';
 import { Trip } from 'src/app/model/trip';
+import { Chapter } from 'src/app/model/chapter';
 
 @Component({
   selector: 'app-trip-summary',
@@ -12,6 +13,7 @@ import { Trip } from 'src/app/model/trip';
 export class TripSummaryComponent implements SummaryModal {
 
   public trip: Trip;
+  public chapters: Chapter[];
 
   constructor(
     private chartService: ChartService,
@@ -22,7 +24,7 @@ export class TripSummaryComponent implements SummaryModal {
     this.tripService.getTripById(id)
       .subscribe(t => {
         this.trip = t;
-        this.chartService.createTrip(null, 'global-map', this.trip);
+        this.chartService.createTrip(this, 'global-map', this.trip);
       });
   }
 

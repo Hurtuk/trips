@@ -68,7 +68,7 @@ export class ChartService {
       // Fill the data
       polygonSeries.include = [countryCode];
       // Color
-      let polygonTemplate = polygonSeries.mapPolygons.template;
+      const polygonTemplate = polygonSeries.mapPolygons.template;
       polygonTemplate.fill = am4core.color("#9F774A");
       polygonTemplate.stroke = am4core.color("#7c5b36");
       polygonTemplate.strokeWidth = 3;
@@ -157,34 +157,69 @@ export class ChartService {
     this.loadCitiesData(imageSeries);
   }
 
+  private average(numbers: number[]) {
+    return numbers.reduce((prev, cur) => prev += cur, 0) / numbers.length;
+  }
+
   /**
    * Creates the trip map
   */
   public createTrip(modal: SummaryModal, elementId: string, trip: Trip) {
-    
     this.zone.runOutsideAngular(() => {
       const stays = this.tripService.getCitiesCountriesByTrip(trip);
+      // Focus on one region or the way to
+      const countriesNb = [...new Set([stays.startFrom.country.codeAlpha2, ...stays.visits.map(v => v.city.country.codeAlpha2)])].length;
       // Create the chart
       const chart = am4core.create(elementId, am4maps.MapChart);
       this.tempChart.set(modal, chart);
       chart.language.locale = am4lang_fr_FR.default;
-      chart.projection = new am4maps.projections.Miller();
+      const polygonSeries = new am4maps.MapPolygonSeries();
+      if (countriesNb > 1 && stays.startFrom.country.codeAlpha2 === "FR") {
+        // Display trip from France to destination
+        chart.projection = new am4maps.projections.Orthographic();
+        chart.deltaLatitude = -this.average([stays.startFrom.latitude, ...stays.visits.map(v => v.latitude)]);
+        chart.deltaLongitude = -this.average([stays.startFrom.longitude, ...stays.visits.map(v => v.longitude)]);
+        chart.backgroundSeries.mapPolygons.template.polygon.fill = am4core.color("#d0e1e5");
+        chart.backgroundSeries.mapPolygons.template.polygon.fillOpacity = 1;
+      } else if (countriesNb > 1) {
+        // Display zoomed world on visited countries
+        chart.projection = new am4maps.projections.Miller();
+        // TODO zoom
+        chart.homeZoomLevel = 5;
+        chart.homeGeoPoint = {
+          latitude: this.average([stays.startFrom.latitude, ...stays.visits.map(v => v.latitude)]),
+          longitude: this.average([stays.startFrom.longitude, ...stays.visits.map(v => v.longitude)])
+        };
+      } else {
+        // Display single country
+        chart.projection = new am4maps.projections.Miller();
+        polygonSeries.include = [stays.startFrom.country.codeAlpha2];
+      }
       // Colors
       chart.background.fillOpacity = 0;
       // Create the data
       chart.geodata = am4geodata_worldHigh;
-      const polygonSeries = new am4maps.MapPolygonSeries();
       polygonSeries.useGeodata = true;
-      // Fill the data
-      if (stays.visits.map(v => v.city.country.codeAlpha2).indexOf(stays.startFrom.country.codeAlpha2) !== -1) {
-        polygonSeries.include = [stays.startFrom.country.codeAlpha2];
-      }
       // Color
-      let polygonTemplate = polygonSeries.mapPolygons.template;
+      const polygonTemplate = polygonSeries.mapPolygons.template;
       polygonTemplate.fill = am4core.color("#9F774A");
       polygonTemplate.stroke = am4core.color("#7c5b36");
-      polygonTemplate.strokeWidth = 3;
+      polygonTemplate.strokeWidth = 1;
       chart.series.push(polygonSeries);
+      // Lines
+      const lineSeries = chart.series.push(new am4maps.MapLineSeries());
+      lineSeries.data = [{
+        "multiGeoLine": [
+          [
+            { latitude: stays.startFrom.latitude, longitude: stays.startFrom.longitude },
+            ...stays.visits.map(v => ({ latitude: v.latitude, longitude: v.longitude }))
+          ]
+        ]
+      }];
+      lineSeries.mapLines.template.line.stroke = am4core.color("#000000");
+      lineSeries.mapLines.template.line.strokeOpacity = 0.5;
+      lineSeries.mapLines.template.line.strokeWidth = 1;
+      lineSeries.mapLines.template.line.strokeDasharray = "2,2";
       // Generate the cities
       const imageSeries = chart.series.push(new am4maps.MapImageSeries());
       const imageSeriesTemplate = imageSeries.mapImages.template;
@@ -195,9 +230,9 @@ export class ChartService {
       circle.strokeWidth = 2;
       circle.nonScaling = true;
       circle.tooltipText = "{name}";
-      imageSeriesTemplate.propertyFields.latitude = "stayedGPSlatitude";
-      imageSeriesTemplate.propertyFields.longitude = "stayedGPSlongitude";
-      imageSeries.data = stays.visits;
+      imageSeriesTemplate.propertyFields.latitude = "latitude";
+      imageSeriesTemplate.propertyFields.longitude = "longitude";
+      imageSeries.data = [stays.startFrom, ...stays.visits.map(v => ({ name: v.city.name, latitude: v.latitude, longitude: v.longitude }))];
     });
 
     return false;

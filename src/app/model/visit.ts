@@ -5,8 +5,8 @@ export class Visit {
     city: City;
     startDate: string;
     endDate: string;
-    stayedGPSlatitude: string;
-    stayedGPSlongitude: string;
+    latitude: number;
+    longitude: number;
     stayedUrl?: string;
     transport: string;
     transportBack?: string;
