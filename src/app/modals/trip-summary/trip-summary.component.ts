@@ -20,7 +20,10 @@ export class TripSummaryComponent implements SummaryModal {
 
   public initFromId(id: number): void {
     this.tripService.getTripById(id)
-      .subscribe(t => this.trip = t);
+      .subscribe(t => {
+        this.trip = t;
+        this.chartService.createTrip(null, 'global-map', this.trip);
+      });
   }
 
   public ngOnDestroy() {

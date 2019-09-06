@@ -10,6 +10,7 @@ import { TripService } from './trip.service';
 import { City } from '../model/city';
 import { BehaviorSubject } from 'rxjs';
 import { SummaryModal } from '../modals/summary-modal';
+import { Trip } from '../model/trip';
 
 am4core.useTheme(am4themes_animated);
 
@@ -154,6 +155,52 @@ export class ChartService {
       })
     );
     this.loadCitiesData(imageSeries);
+  }
+
+  /**
+   * Creates the trip map
+  */
+  public createTrip(modal: SummaryModal, elementId: string, trip: Trip) {
+    
+    this.zone.runOutsideAngular(() => {
+      const stays = this.tripService.getCitiesCountriesByTrip(trip);
+      // Create the chart
+      const chart = am4core.create(elementId, am4maps.MapChart);
+      this.tempChart.set(modal, chart);
+      chart.language.locale = am4lang_fr_FR.default;
+      chart.projection = new am4maps.projections.Miller();
+      // Colors
+      chart.background.fillOpacity = 0;
+      // Create the data
+      chart.geodata = am4geodata_worldHigh;
+      const polygonSeries = new am4maps.MapPolygonSeries();
+      polygonSeries.useGeodata = true;
+      // Fill the data
+      if (stays.visits.map(v => v.city.country.codeAlpha2).indexOf(stays.startFrom.country.codeAlpha2) !== -1) {
+        polygonSeries.include = [stays.startFrom.country.codeAlpha2];
+      }
+      // Color
+      let polygonTemplate = polygonSeries.mapPolygons.template;
+      polygonTemplate.fill = am4core.color("#9F774A");
+      polygonTemplate.stroke = am4core.color("#7c5b36");
+      polygonTemplate.strokeWidth = 3;
+      chart.series.push(polygonSeries);
+      // Generate the cities
+      const imageSeries = chart.series.push(new am4maps.MapImageSeries());
+      const imageSeriesTemplate = imageSeries.mapImages.template;
+      const circle = imageSeriesTemplate.createChild(am4core.Circle);
+      circle.radius = 10;
+      circle.fill = am4core.color("#B27799");
+      circle.stroke = am4core.color("#FFFFFF");
+      circle.strokeWidth = 2;
+      circle.nonScaling = true;
+      circle.tooltipText = "{name}";
+      imageSeriesTemplate.propertyFields.latitude = "stayedGPSlatitude";
+      imageSeriesTemplate.propertyFields.longitude = "stayedGPSlongitude";
+      imageSeries.data = stays.visits;
+    });
+
+    return false;
   }
 
   /**

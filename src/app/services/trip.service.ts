@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { UrlBuilderService } from './url-builder.service';
 import { SimpleTrip } from '../model/simple-trip';
 import { Trip } from '../model/trip';
+import { Visit } from '../model/visit';
 
 @Injectable({
   providedIn: 'root'
@@ -43,5 +44,23 @@ export class TripService {
 
   public getTripById(id: number): Observable<Trip> {
     return this.http.get<Trip>(this.urlBuilder.buildUrl('getTripById', id));
+  }
+
+  public getCitiesCountriesByTrip(trip: Trip): {startFrom: City, visits: Visit[]} {
+    const results: {startFrom: City, visits: Visit[]} = {startFrom: null, visits: []};
+    
+    if (trip.visits[0].endDate < trip.visits[trip.visits.length - 1].endDate) {
+      results.startFrom = trip.visits[0].city;
+      for (let i = 1; i < trip.visits.length; i++) {
+        if (trip.visits[i].cityFrom) {
+          results.visits.push(trip.visits[i]);
+        }
+      }
+    } else {
+      results.startFrom = trip.visits[0].cityFrom;
+      results.visits.push(trip.visits[0]);
+    }
+
+    return results;
   }
 }
