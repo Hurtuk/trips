@@ -6,7 +6,12 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class Nl2pPipe implements PipeTransform {
 
   transform(value: string): string {
-    return value.split("\n").map(v => !v ? '': ('<p>' + v + '</p>')).join('');
+    return value
+      .replace(" ?", "&nbsp;?")
+      .replace(" !", "&nbsp;!")
+      .replace(" :", "&nbsp;:")
+      .replace(" ;", "&nbsp;;")
+      .split("\n").map(v => !v ? '': ('<p>' + v + '</p>')).join('');
   }
 
 }

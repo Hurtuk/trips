@@ -154,6 +154,11 @@ i {
         letter-spacing: -2px;
     }
 
+    h5 {
+        margin-bottom: -4px;
+        margin-top: 15px;
+    }
+
     article {
         flex: 1;
         text-align: justify;
@@ -163,6 +168,7 @@ i {
         line-height: 1.2em;
         font-size: 1.1em;
         margin-bottom: 10px;
+        margin-top: 10px;
 
         > div {
             flex: 1;
@@ -191,10 +197,6 @@ i {
     &.page-left {
         padding-left: 40px;
 
-        button {
-            left: 0;
-        }
-
         &.shown {
             + .fake-page {
                 display: block !important;
@@ -203,10 +205,12 @@ i {
     }
     &.page-right {
         padding-right: 40px;
-
-        button {
-            right: 0;
-        }
+    }
+    .btn-left {
+        left: 0;
+    }
+    .btn-right {
+        right: 0;
     }
 
     &.page-double {
@@ -227,6 +231,31 @@ i {
         font-size: 1.1em;
         display: block;
         margin-bottom: -10px;
+    }
+}
+
+.infos {
+    overflow: auto;
+    margin-bottom: -10px;
+
+    span {
+        float: left;
+        font-family: 'Caveat', cursive;
+        font-size: 1.3em;
+        margin: 7px 0;
+
+        i {
+            font-size: 24px;
+        }
+    }
+
+    div {
+        float: right;
+    }
+
+    img {
+        height: 35px;
+        margin: 0 5px;
     }
 }
 

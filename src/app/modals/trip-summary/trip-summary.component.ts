@@ -37,12 +37,16 @@ export class TripSummaryComponent implements SummaryModal {
             p++;
             perPage = 0;
           }
+          if (chapter.images && chapter.images.length) {
+            perPage++;
+          }
           if (!this.chaptersByPage.get(p)) {
             this.chaptersByPage.set(p, []);
           }
           this.chaptersByPage.get(p).push(chapter);
           perPage++;
         });
+        console.log(this.chaptersByPage);
       });
   }
 
