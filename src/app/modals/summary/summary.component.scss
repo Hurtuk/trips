@@ -26,41 +26,7 @@
 
 #aside {
     text-align: center;
-}
-
-.photo {
-    transform: rotate(-.5deg);
-    text-align: center;
-    margin-top: 36px;
-    display: inline-block;
-
-    img {
-        max-width: 90%;
-        max-height: 515px;
-    }
-
-    &::before {
-        content: '';
-        display: block;
-        width: 90px;
-        height: 25px;
-        background-color: rgba(255, 255, 255, .5);
-        position: absolute;
-        transform: rotate(-30deg);
-        top: -3px;
-    }
-
-    &::after {
-        content: '';
-        display: block;
-        width: 90px;
-        height: 25px;
-        background-color: rgba(255, 255, 255, .5);
-        position: absolute;
-        transform: rotate(-1deg);
-        bottom: -11px;
-        right: 16%;
-    }
+    justify-content: center;
 }
 
 h1 {

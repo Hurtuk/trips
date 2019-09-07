@@ -1,5 +1,5 @@
 <section>
-    <div class="page-left" id="summary">
+    <div class="page page-left" id="summary" [class.shown]="currentPage === 1">
         <ng-container *ngIf="trip">
             <h1>{{trip.title}}</h1>
             <h2>{{citiesToString()}}</h2>
@@ -23,10 +23,32 @@
         </ng-container>
         <div id="global-map"></div>
     </div>
-    <div class="page-right">
-        TODO
-        <!--<h1>{{entity?.name}}</h1>
-        <h2 *ngIf="entity?.country">{{entity.country.name}}</h2>
-        <app-trip-recap *ngFor="let trip of trips" [trip]="trip"></app-trip-recap>-->
-    </div>
+    <div class="page page-right chapter" [class.shown]="!chapters || !chapters.length"></div>
+    <ng-container *ngFor="let pageChapter of chaptersByPage | keyvalue; last as isLast">
+        <div *ngFor="let chapter of pageChapter.value; index as i"
+            class="page chapter page-{{ pageChapter.key === 1 ? 'right': ((!isLast && pageChapter.value.length === 1) || chapter.images) ? 'double': i % 2 ? 'right': 'left' }}"
+            [class.shown]="pageChapter.key === currentPage">
+            <!-- Page buttons -->
+            <button type="button" (click)="currentPage = currentPage - 1" *ngIf="currentPage > 1 && i % 2 === 0">
+                <i class="material-icons">keyboard_arrow_left</i>
+            </button>
+            <button type="button" (click)="currentPage = currentPage + 1" *ngIf="(chapters.length > 1 && currentPage === 1) || (chapter.number < chapters.length && i % 2 === 1)">
+                <i class="material-icons">keyboard_arrow_right</i>
+            </button>
+            <!-- Photos -->
+            <div class="photo-page" [class.shown]="pageChapter.key === currentPage" *ngIf="pageChapter.key > 1 && chapter.images">
+                <app-photo *ngFor="let photo of chapter.images" [photoUrl]="photo"></app-photo>
+            </div>
+            <!-- Chapter content -->
+            <div>
+                <h3>Chapitre {{ chapter.number }}</h3>
+                <h4>{{ chapter.title }}</h4>
+                <article>
+                    <div class="chapter-content" [innerHtml]="chapter.content | nl2p"></div>
+                </article>
+                <span class="chapter-number">{{ chapter.number }}/{{ chapters.length }}</span>
+            </div>
+        </div>
+        <div class="page page-right chapter fake-page"></div>
+    </ng-container>
 </section>

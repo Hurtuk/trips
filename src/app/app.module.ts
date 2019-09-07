@@ -15,6 +15,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { UrlBuilderService } from './services/url-builder.service';
 import { TripRecapComponent } from './modals/trip-recap/trip-recap.component';
 import { CitySummaryComponent } from './modals/city-summary/city-summary.component';
+import { Nl2pPipe } from './pipes/nl2p.pipe';
+import { PhotoComponent } from './photo/photo.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,9 @@ import { CitySummaryComponent } from './modals/city-summary/city-summary.compone
     WorldComponent,
     CountrySummaryComponent,
     TripRecapComponent,
-    CitySummaryComponent
+    CitySummaryComponent,
+    Nl2pPipe,
+    PhotoComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,34 @@
+.photo {
+    transform: rotate(-.5deg);
+    text-align: center;
+    display: inline-block;
+
+    img {
+        max-width: 90%;
+        max-height: 515px;
+        box-shadow: -1px 1px 2px -1px black;
+    }
+
+    &::before {
+        content: '';
+        display: block;
+        width: 90px;
+        height: 25px;
+        background-color: rgba(255, 255, 255, .5);
+        position: absolute;
+        transform: rotate(-30deg);
+        top: -3px;
+    }
+
+    &::after {
+        content: '';
+        display: block;
+        width: 90px;
+        height: 25px;
+        background-color: rgba(255, 255, 255, .5);
+        position: absolute;
+        transform: rotate(-1deg);
+        bottom: -11px;
+        right: 16%;
+    }
+}

@@ -14,7 +14,8 @@ export class TripSummaryComponent implements SummaryModal {
 
   public trip: Trip;
   public chapters: Chapter[];
-  public currentPage: number;
+  public currentPage = 1;
+  public chaptersByPage = new Map<number, Chapter[]>();
 
   constructor(
     private chartService: ChartService,
@@ -26,6 +27,22 @@ export class TripSummaryComponent implements SummaryModal {
       .subscribe(t => {
         this.trip = t;
         this.chartService.createTrip(this, 'global-map', this.trip);
+      });
+    this.tripService.getChaptersByTrip(id)
+      .subscribe(c => {
+        this.chapters = c;
+        let p = 1, perPage = 1;
+        this.chapters.forEach(chapter => {
+          if ((chapter.images && chapter.images.length) || (chapter.from && chapter.to) || perPage === 2) {
+            p++;
+            perPage = 0;
+          }
+          if (!this.chaptersByPage.get(p)) {
+            this.chaptersByPage.set(p, []);
+          }
+          this.chaptersByPage.get(p).push(chapter);
+          perPage++;
+        });
       });
   }
 
@@ -42,11 +59,7 @@ export class TripSummaryComponent implements SummaryModal {
   }
 
   public getTransports(): string[] {
-    return this.trip.visits.map(v => v.transport).filter(this.unique);
-  }
-
-  private unique(value, index, self): boolean {
-    return self.indexOf(value) === index
+    return [...new Set(this.trip.visits.map(v => v.transport))];
   }
 
 }

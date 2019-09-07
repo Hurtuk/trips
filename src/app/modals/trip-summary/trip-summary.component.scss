@@ -53,6 +53,8 @@ section {
 #summary {
     display: flex;
     flex-direction: column;
+    margin-right: 5px;
+    margin-left: 5px;
 
     h1 {
         margin: 0;
@@ -115,4 +117,124 @@ i {
     span + i {
         margin-left: 0;
     }
+}
+
+.page {
+    &:not(.shown) {
+        display: none !important;
+    }
+}
+
+.chapter {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+
+    > div {
+        flex: 1;
+        flex-direction: column;
+        position: relative;
+        display: flex;
+    }
+
+    h3 {
+        font-family: 'Caveat', cursive;
+        padding: 0;
+        margin: 0;
+        text-align: center;
+    }
+
+    h4 {
+        font-family: 'Amatic SC', cursive;
+        padding: 0;
+        margin: 0;
+        text-align: center;
+        font-size: 2.5em;
+        font-weight: normal;
+        letter-spacing: -2px;
+    }
+
+    article {
+        flex: 1;
+        text-align: justify;
+        display: flex;
+        overflow: hidden;
+        font-family: 'Kalam', cursive;
+        line-height: 1.2em;
+        font-size: 1.1em;
+        margin-bottom: 10px;
+
+        > div {
+            flex: 1;
+            overflow-y: scroll;
+            margin-right: -50px;
+            padding-right: 50px;
+        }
+    }
+
+    button {
+        position: absolute;
+        background: transparent;
+        border: 0;
+        height: 150px;
+        top: calc(50% - 75px);
+        cursor: pointer;
+        padding: 0;
+        outline: 0;
+        z-index: 2;
+
+        i {
+            font-size: 40px;
+        }
+    }
+
+    &.page-left {
+        padding-left: 40px;
+
+        button {
+            left: 0;
+        }
+
+        &.shown {
+            + .fake-page {
+                display: block !important;
+            }
+        }
+    }
+    &.page-right {
+        padding-right: 40px;
+
+        button {
+            right: 0;
+        }
+    }
+
+    &.page-double {
+        padding: 0;
+
+        > div:first-of-type {
+            padding: 30px 30px 30px 40px;
+        }
+
+        > div + div {
+            padding: 30px 40px 30px 30px;
+        }
+    }
+
+    .chapter-number {
+        font-family: 'Caveat', cursive;
+        text-align: center;
+        font-size: 1.1em;
+        display: block;
+        margin-bottom: -10px;
+    }
+}
+
+.photo-page {
+    justify-content: center;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
 }

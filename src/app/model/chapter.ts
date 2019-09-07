@@ -5,7 +5,7 @@ export class Chapter {
     date?: string;
     title: string;
     content: string;
-    image?: string[];
+    images?: string[];
     transports?: string[];
     from?: City;
     to?: City;

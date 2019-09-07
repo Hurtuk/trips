@@ -5,6 +5,7 @@ import * as am4maps from "@amcharts/amcharts4/maps";
 import * as am4lang_fr_FR from "@amcharts/amcharts4/lang/fr_FR";
 import am4geodata_worldLow from "@amcharts/amcharts4-geodata/worldLow";
 import am4geodata_worldHigh from "@amcharts/amcharts4-geodata/worldHigh";
+import am4geodata_caribbeanHigh from "@amcharts/amcharts4-geodata/region/world/caribbeanHigh";
 import { Router } from '@angular/router';
 import { TripService } from './trip.service';
 import { City } from '../model/city';
@@ -58,15 +59,31 @@ export class ChartService {
       const chart = am4core.create(elementId, am4maps.MapChart);
       this.tempChart.set(modal, chart);
       chart.language.locale = am4lang_fr_FR.default;
-      chart.projection = new am4maps.projections.Miller();
       // Colors
       chart.background.fillOpacity = 0;
-      // Create the data
-      chart.geodata = am4geodata_worldHigh;
-      const polygonSeries = new am4maps.MapPolygonSeries();
-      polygonSeries.useGeodata = true;
       // Fill the data
+      const polygonSeries = new am4maps.MapPolygonSeries();
+      chart.projection = new am4maps.projections.Miller();
+      chart.geodata = am4geodata_worldHigh;
+      // Create the data
+      switch (countryCode) {
+        case "US":
+          chart.deltaLongitude = 125;
+          chart.homeZoomLevel = 3;
+          break;
+        case "RU":
+          chart.deltaLongitude = -100;
+          chart.homeZoomLevel = 2;
+          break;
+        case "NZ":
+          chart.deltaLongitude = -170;
+          chart.homeZoomLevel = 9;
+          break;
+        default:
+          chart.geodata = am4geodata_worldHigh;
+      }
       polygonSeries.include = [countryCode];
+      polygonSeries.useGeodata = true;
       // Color
       const polygonTemplate = polygonSeries.mapPolygons.template;
       polygonTemplate.fill = am4core.color("#9F774A");

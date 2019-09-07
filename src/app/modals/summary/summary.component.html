@@ -1,8 +1,6 @@
 <section>
     <div id="aside">
-        <div *ngIf="photoUrl" class="photo">
-            <img [src]="photoUrl" />
-        </div>
+        <app-photo *ngIf="photoUrl" [photoUrl]="photoUrl"></app-photo>
     </div>
     <div id="trips">
         <h1>{{entity?.name}}</h1>
