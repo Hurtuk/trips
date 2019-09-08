@@ -33,6 +33,7 @@ export class TripSummaryComponent implements SummaryModal {
         this.chapters = c;
         let p = 1, perPage = 1;
         this.chapters.forEach(chapter => {
+          // Sorting by page
           if ((chapter.images && chapter.images.length) || (chapter.from && chapter.to) || perPage === 2) {
             p++;
             perPage = 0;
@@ -45,8 +46,13 @@ export class TripSummaryComponent implements SummaryModal {
           }
           this.chaptersByPage.get(p).push(chapter);
           perPage++;
+          // Creating maps
+          setTimeout(() => {
+            if (chapter.from && chapter.to) {
+              this.chartService.createTrip(this, 'map-chapter-' + chapter.number, null, [chapter.from, chapter.to]);
+            }
+          }, 0);
         });
-        console.log(this.chaptersByPage);
       });
   }
 
@@ -64,6 +70,27 @@ export class TripSummaryComponent implements SummaryModal {
 
   public getTransports(): string[] {
     return [...new Set(this.trip.visits.map(v => v.transport))];
+  }
+
+  public getDateSuffixe(page: number, inPage: number, date: string): string {
+    if (!date) {
+      return '';
+    }
+    if ((inPage === 0 && this.chaptersByPage.get(page).length === 1) || inPage === 1) {
+      if (this.chaptersByPage.get(page + 1) && this.chaptersByPage.get(page + 1)[0].date && this.chaptersByPage.get(page + 1)[0].date === date) {
+        return ' (1/2)';
+      } else if (page > 1
+        && ((inPage === 0 && this.chaptersByPage.get(page - 1)[this.chaptersByPage.get(page - 1).length - 1].date === date)
+          || (inPage === 1 && this.chaptersByPage.get(page)[inPage - 1].date === date))) {
+        return ' (2/2)';
+      }
+    } /*else if (page > 1) {
+      if ((inPage === 0 && this.chaptersByPage.get(page - 1)[this.chaptersByPage.get(page - 1).length - 1].date === date)
+        || (inPage === 1 && this.chaptersByPage.get(page)[inPage - 1].date === date)) {
+        return ' (2/2)';
+      }
+    }*/
+    return '';
   }
 
 }

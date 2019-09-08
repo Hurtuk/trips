@@ -261,6 +261,22 @@ i {
 
 .photo-page {
     justify-content: center;
+    overflow-y: auto;
+
+    &.multi {
+        justify-content: flex-start;
+        padding-top: 50px !important;
+
+        app-photo {
+            width: 70%;
+
+            &:nth-child(even) {
+                align-self: flex-end;
+                transform: rotate(3deg);
+                margin-top: -55px;
+            }
+        }
+    }
 }
 
 ::-webkit-scrollbar {

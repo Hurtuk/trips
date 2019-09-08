@@ -12,6 +12,7 @@ import { City } from '../model/city';
 import { BehaviorSubject } from 'rxjs';
 import { SummaryModal } from '../modals/summary-modal';
 import { Trip } from '../model/trip';
+import { Visit } from '../model/visit';
 
 am4core.useTheme(am4themes_animated);
 
@@ -24,7 +25,7 @@ export class ChartService {
   private VISITED_COLOR = am4core.color("#ffd06d");
   private FULL_VISITED_COLOR = am4core.color("#f29d00");
   private visitedCities: BehaviorSubject<City[]> = new BehaviorSubject([]);
-  private tempChart = new Map<SummaryModal, am4maps.MapChart>();
+  private tempChart = new Map<SummaryModal, am4maps.MapChart[]>();
 
   constructor(
     private zone: NgZone,
@@ -34,7 +35,7 @@ export class ChartService {
 
   public disposeTempChart(modal: SummaryModal) {
     if (this.tempChart.get(modal)) {
-      this.tempChart.get(modal).dispose();
+      this.tempChart.get(modal).map(chart => chart.dispose());
     }
   }
 
@@ -57,7 +58,10 @@ export class ChartService {
     this.zone.runOutsideAngular(() => {
       // Create the chart
       const chart = am4core.create(elementId, am4maps.MapChart);
-      this.tempChart.set(modal, chart);
+      if (!this.tempChart.get(modal)) {
+        this.tempChart.set(modal, []);
+      }
+      this.tempChart.get(modal).push(chart);
       chart.language.locale = am4lang_fr_FR.default;
       // Colors
       chart.background.fillOpacity = 0;
@@ -181,14 +185,22 @@ export class ChartService {
   /**
    * Creates the trip map
   */
-  public createTrip(modal: SummaryModal, elementId: string, trip: Trip) {
+  public createTrip(modal: SummaryModal, elementId: string, trip: Trip, cities: City[] = null) {
     this.zone.runOutsideAngular(() => {
-      const stays = this.tripService.getCitiesCountriesByTrip(trip);
+      let stays: { startFrom: City, visits: Visit[]; };
+      if (trip === null) {
+        stays = { startFrom: cities[0], visits: [{ id: null, startDate: null, endDate: null, transport: null, city: cities[1], latitude: cities[1].latitude, longitude: cities[1].longitude }] };
+      } else {
+        stays = this.tripService.getCitiesCountriesByTrip(trip);
+      }
       // Focus on one region or the way to
       const countriesNb = [...new Set([stays.startFrom.country.codeAlpha2, ...stays.visits.map(v => v.city.country.codeAlpha2)])].length;
       // Create the chart
       const chart = am4core.create(elementId, am4maps.MapChart);
-      this.tempChart.set(modal, chart);
+      if (!this.tempChart.get(modal)) {
+        this.tempChart.set(modal, []);
+      }
+      this.tempChart.get(modal).push(chart);
       chart.language.locale = am4lang_fr_FR.default;
       const polygonSeries = new am4maps.MapPolygonSeries();
       if (countriesNb > 1 && stays.startFrom.country.codeAlpha2 === "FR") {
@@ -198,7 +210,7 @@ export class ChartService {
         chart.deltaLongitude = -this.average([stays.startFrom.longitude, ...stays.visits.map(v => v.longitude)]);
         chart.backgroundSeries.mapPolygons.template.polygon.fill = am4core.color("#d0e1e5");
         chart.backgroundSeries.mapPolygons.template.polygon.fillOpacity = 1;
-      } else if (countriesNb > 1) {
+      } else if (countriesNb > 1 || trip === null) {
         // Display zoomed world on visited countries
         chart.projection = new am4maps.projections.Miller();
         chart.homeZoomLevel = 5;
@@ -252,6 +264,12 @@ export class ChartService {
     });
 
     return false;
+  }
+
+  private calculateZoom(cities: City[]): number {
+
+
+    return 0;
   }
 
   /**
