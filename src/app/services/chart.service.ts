@@ -213,11 +213,9 @@ export class ChartService {
       } else if (countriesNb > 1 || trip === null) {
         // Display zoomed world on visited countries
         chart.projection = new am4maps.projections.Miller();
-        chart.homeZoomLevel = 5;
-        chart.homeGeoPoint = {
-          latitude: this.average([stays.startFrom.latitude, ...stays.visits.map(v => v.latitude)]),
-          longitude: this.average([stays.startFrom.longitude, ...stays.visits.map(v => v.longitude)])
-        };
+        const zoomData = this.calculateZoomPoint([stays.startFrom, ...stays.visits.map(v => v.city)]);
+        chart.homeZoomLevel = zoomData.zoom;
+        chart.homeGeoPoint = zoomData.center;
       } else {
         // Display single country
         chart.projection = new am4maps.projections.Miller();
@@ -266,10 +264,31 @@ export class ChartService {
     return false;
   }
 
-  private calculateZoom(cities: City[]): number {
+  private calculateZoomPoint(cities: City[]): {center: { latitude: number, longitude: number }, zoom: number } {
+    const maxLatitude = Math.max(...cities.map(c => c.latitude));
+    const maxLongitude = Math.max(...cities.map(c => c.longitude));
+    const minLatitude = Math.min(...cities.map(c => c.latitude));
+    const minLongitude = Math.min(...cities.map(c => c.longitude));
 
+    const ref = Math.max(maxLatitude - minLatitude, maxLongitude - minLongitude);
+    let zoom: number;
+    if (ref < 1) {
+      zoom = 32;
+    } else if (ref < 20) {
+      zoom = 13;
+    } else if (ref < 100) {
+      zoom = 8;
+    } else {
+      zoom = 5;
+    }
 
-    return 0;
+    return {
+      center: {
+        latitude: (maxLatitude + minLatitude) / 2,
+        longitude: (maxLongitude + minLongitude) / 2
+      },
+      zoom: zoom
+    };
   }
 
   /**

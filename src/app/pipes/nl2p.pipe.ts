@@ -7,10 +7,12 @@ export class Nl2pPipe implements PipeTransform {
 
   transform(value: string): string {
     return value
-      .replace(" ?", "&nbsp;?")
-      .replace(" !", "&nbsp;!")
-      .replace(" :", "&nbsp;:")
-      .replace(" ;", "&nbsp;;")
+      .replace(/ \?/gi, "&nbsp;?")
+      .replace(/ !/gi, "&nbsp;!")
+      .replace(/ :/gi, "&nbsp;:")
+      .replace(/ ;/gi, "&nbsp;;")
+      .replace(/« /gi, "«&nbsp;")
+      .replace(/ »/gi, "&nbsp;»")
       .split("\n").map(v => !v ? '': ('<p>' + v + '</p>')).join('');
   }
 

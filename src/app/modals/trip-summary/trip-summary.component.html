@@ -36,8 +36,8 @@
                 <i class="material-icons">keyboard_arrow_right</i>
             </button>
             <!-- Photos -->
-            <div class="photo-page" [class.multi]="chapter.images.length > 1" [class.shown]="pageChapter.key === currentPage" *ngIf="pageChapter.key > 1 && ((chapter.images && chapter.images.length) || chapter.from)">
-                <div id="map-chapter-{{chapter.number}}" *ngIf="chapter.from"></div> <!-- TODO Height to zoom -->
+            <div class="photo-page" [class.multi]="chapter.images.length > 1 || (chapter.images.length && chapter.from)" [class.shown]="pageChapter.key === currentPage" *ngIf="pageChapter.key > 1 && ((chapter.images && chapter.images.length) || chapter.from)">
+                <div class="map-chapter" id="map-chapter-{{chapter.number}}" *ngIf="chapter.from"></div>
                 <app-photo *ngFor="let photo of chapter.images" [photoUrl]="photo"></app-photo>
             </div>
             <!-- Chapter content -->

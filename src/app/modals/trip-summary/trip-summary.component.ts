@@ -34,18 +34,16 @@ export class TripSummaryComponent implements SummaryModal {
         let p = 1, perPage = 1;
         this.chapters.forEach(chapter => {
           // Sorting by page
-          if ((chapter.images && chapter.images.length) || (chapter.from && chapter.to) || perPage === 2) {
-            p++;
-            perPage = 0;
-          }
-          if (chapter.images && chapter.images.length) {
-            perPage++;
-          }
           if (!this.chaptersByPage.get(p)) {
             this.chaptersByPage.set(p, []);
           }
           this.chaptersByPage.get(p).push(chapter);
-          perPage++;
+          if (p === 1 || (chapter.images && chapter.images.length) || (chapter.from && chapter.to) || perPage === 2) {
+            p++;
+            perPage = 1;
+          } else {
+            perPage++;
+          }
           // Creating maps
           setTimeout(() => {
             if (chapter.from && chapter.to) {

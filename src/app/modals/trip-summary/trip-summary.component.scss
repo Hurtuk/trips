@@ -268,7 +268,7 @@ i {
         padding-top: 50px !important;
 
         app-photo {
-            width: 70%;
+            max-width: 70%;
 
             &:nth-child(even) {
                 align-self: flex-end;
@@ -277,6 +277,10 @@ i {
             }
         }
     }
+}
+
+.map-chapter {
+    height: 300px;
 }
 
 ::-webkit-scrollbar {
