@@ -5,7 +5,6 @@ import * as am4maps from "@amcharts/amcharts4/maps";
 import * as am4lang_fr_FR from "@amcharts/amcharts4/lang/fr_FR";
 import am4geodata_worldLow from "@amcharts/amcharts4-geodata/worldLow";
 import am4geodata_worldHigh from "@amcharts/amcharts4-geodata/worldHigh";
-import am4geodata_caribbeanHigh from "@amcharts/amcharts4-geodata/region/world/caribbeanHigh";
 import { Router } from '@angular/router';
 import { TripService } from './trip.service';
 import { City } from '../model/city';
@@ -21,9 +20,9 @@ am4core.useTheme(am4themes_animated);
 })
 export class ChartService {
 
-  private UNVISITED_COLOR = am4core.color("#d9d9d9");
-  private VISITED_COLOR = am4core.color("#ffd06d");
-  private FULL_VISITED_COLOR = am4core.color("#f29d00");
+  private UNVISITED_COLOR = am4core.color("#d8c3a2");
+  private VISITED_COLOR = am4core.color("#d86d61");
+  private FULL_VISITED_COLOR = am4core.color("#b53300");
   private visitedCities: BehaviorSubject<City[]> = new BehaviorSubject([]);
   private tempChart = new Map<SummaryModal, am4maps.MapChart[]>();
 
@@ -48,6 +47,7 @@ export class ChartService {
       const map = am4core.create(elementId, am4maps.MapChart);
       this.createCountries(map);
       this.createCities(map);
+      map.deltaLongitude = -11;
     });
   }
 
@@ -91,19 +91,21 @@ export class ChartService {
       // Color
       const polygonTemplate = polygonSeries.mapPolygons.template;
       polygonTemplate.fill = am4core.color("#9F774A");
+      polygonTemplate.opacity = .7;
       polygonTemplate.stroke = am4core.color("#7c5b36");
       polygonTemplate.strokeWidth = 3;
       chart.series.push(polygonSeries);
       // Generate the cities
       const imageSeries = chart.series.push(new am4maps.MapImageSeries());
       const imageSeriesTemplate = imageSeries.mapImages.template;
-      const circle = imageSeriesTemplate.createChild(am4core.Circle);
-      circle.radius = 10;
-      circle.fill = am4core.color("#B27799");
-      circle.stroke = am4core.color("#FFFFFF");
-      circle.strokeWidth = 2;
-      circle.nonScaling = true;
-      circle.tooltipText = "{name}";
+      const marker = imageSeriesTemplate.createChild(am4core.Image);
+      marker.href = "assets/point.png";
+      marker.width = 40;
+      marker.height = 40;
+      marker.nonScaling = true;
+      marker.horizontalCenter = "middle";
+      marker.verticalCenter = "bottom";
+      marker.tooltipText = "{name}";
       imageSeriesTemplate.propertyFields.latitude = "latitude";
       imageSeriesTemplate.propertyFields.longitude = "longitude";
       this.visitedCities.subscribe(cities => {
@@ -118,9 +120,6 @@ export class ChartService {
   private createCountries(map: am4maps.MapChart) {
     map.language.locale = am4lang_fr_FR.default;
     map.projection = new am4maps.projections.Miller();
-    // Colors
-    map.background.fill = am4core.color("#eff6fc");
-    map.background.fillOpacity = 1;
     // Create the data and exclude Antarctica
     map.geodata = am4geodata_worldLow;
     const polygonSeries = new am4maps.MapPolygonSeries();
@@ -132,6 +131,10 @@ export class ChartService {
     const polygonTemplate = polygonSeries.mapPolygons.template;
     polygonTemplate.tooltipText = "{name}";
     polygonTemplate.propertyFields.fill = "fill";
+    polygonTemplate.propertyFields.opacity = "opacity";
+    polygonTemplate.stroke = am4core.color("#804e2f");
+    polygonTemplate.strokeOpacity = .7;
+    polygonTemplate.strokeWidth = 1;
     // Open modal on click
     polygonTemplate.events.on('hit', ev =>
       this.zone.run(() => {
@@ -154,13 +157,14 @@ export class ChartService {
   private createCities(map: am4maps.MapChart) {
     const imageSeries = map.series.push(new am4maps.MapImageSeries());
     const imageSeriesTemplate = imageSeries.mapImages.template;
-    const circle = imageSeriesTemplate.createChild(am4core.Circle);
-    circle.radius = 10;
-    circle.fill = am4core.color("#B27799");
-    circle.stroke = am4core.color("#FFFFFF");
-    circle.strokeWidth = 2;
-    circle.nonScaling = true;
-    circle.tooltipText = "{name}";
+    const marker = imageSeriesTemplate.createChild(am4core.Image);
+    marker.href = "assets/point.png";
+    marker.width = 40;
+    marker.height = 40;
+    marker.nonScaling = true;
+    marker.horizontalCenter = "middle";
+    marker.verticalCenter = "bottom";
+    marker.tooltipText = "{name}";
     imageSeriesTemplate.propertyFields.latitude = "latitude";
     imageSeriesTemplate.propertyFields.longitude = "longitude";
     imageSeriesTemplate.events.on('hit', ev =>
@@ -249,13 +253,14 @@ export class ChartService {
       // Generate the cities
       const imageSeries = chart.series.push(new am4maps.MapImageSeries());
       const imageSeriesTemplate = imageSeries.mapImages.template;
-      const circle = imageSeriesTemplate.createChild(am4core.Circle);
-      circle.radius = 10;
-      circle.fill = am4core.color("#B27799");
-      circle.stroke = am4core.color("#FFFFFF");
-      circle.strokeWidth = 2;
-      circle.nonScaling = true;
-      circle.tooltipText = "{name}";
+      const marker = imageSeriesTemplate.createChild(am4core.Image);
+      marker.href = "assets/point.png";
+      marker.width = 40;
+      marker.height = 40;
+      marker.nonScaling = true;
+      marker.horizontalCenter = "middle";
+      marker.verticalCenter = "bottom";
+      marker.tooltipText = "{name}";
       imageSeriesTemplate.propertyFields.latitude = "latitude";
       imageSeriesTemplate.propertyFields.longitude = "longitude";
       imageSeries.data = [stays.startFrom, ...stays.visits.map(v => ({ name: v.city.name, latitude: v.latitude, longitude: v.longitude }))];
@@ -301,7 +306,8 @@ export class ChartService {
           id: c.codeAlpha2,
           name: c.name,
           value: c.count,
-          fill: !c.count ? this.UNVISITED_COLOR: c.count > 1 ? this.FULL_VISITED_COLOR: this.VISITED_COLOR
+          fill: !c.count ? this.UNVISITED_COLOR: c.count > 1 ? this.FULL_VISITED_COLOR: this.VISITED_COLOR,
+          opacity: !c.count ? .6: 1
         }));
       });
   }
@@ -313,7 +319,7 @@ export class ChartService {
     this.tripService.getVisitedCities()
       .subscribe(cities => {
         this.visitedCities.next(cities);
-        imageSeries.data = cities;
+        imageSeries.data = cities.filter(c => c.showGlobal);
       });
   }
 }

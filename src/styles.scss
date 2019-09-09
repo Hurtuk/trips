@@ -8,6 +8,24 @@ body {
     font-family: "Open Sans";
 }
 
+body {
+    position: relative;
+    background-color: #B9945C;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url(./assets/map-bg-2.jpg);
+        background-size: cover;
+        opacity: .5;
+        background-position: center center;
+    }
+}
+
 mat-dialog-container {
     overflow: hidden !important;
     display: flex !important;
