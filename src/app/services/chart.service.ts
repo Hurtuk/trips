@@ -224,6 +224,11 @@ export class ChartService {
         // Display single country
         chart.projection = new am4maps.projections.Miller();
         polygonSeries.include = [stays.startFrom.country.codeAlpha2];
+        const zoomData = this.getAverageAndRange([stays.startFrom, ...stays.visits.map(v => v.city)]);
+        if (stays.visits.length > 2 && zoomData.range < 3) {
+          chart.homeZoomLevel = 6 - Math.ceil(zoomData.range);
+          chart.homeGeoPoint = zoomData.average;
+        }
       }
       // Colors
       chart.background.fillOpacity = 0;
@@ -269,29 +274,35 @@ export class ChartService {
     return false;
   }
 
-  private calculateZoomPoint(cities: City[]): {center: { latitude: number, longitude: number }, zoom: number } {
+  private getAverageAndRange(cities: City[]): { average: { longitude: number, latitude: number }, range: number } {
     const maxLatitude = Math.max(...cities.map(c => c.latitude));
     const maxLongitude = Math.max(...cities.map(c => c.longitude));
     const minLatitude = Math.min(...cities.map(c => c.latitude));
     const minLongitude = Math.min(...cities.map(c => c.longitude));
+    return {
+      average: {
+        latitude: (maxLatitude + minLatitude) / 2,
+        longitude: (maxLongitude + minLongitude) / 2
+      },
+      range: Math.max(maxLatitude - minLatitude, maxLongitude - minLongitude)
+    };
+  }
 
-    const ref = Math.max(maxLatitude - minLatitude, maxLongitude - minLongitude);
+  private calculateZoomPoint(cities: City[]): {center: { latitude: number, longitude: number }, zoom: number } {
+    const ref = this.getAverageAndRange(cities);
     let zoom: number;
-    if (ref < 1) {
+    if (ref.range < 1) {
       zoom = 32;
-    } else if (ref < 20) {
+    } else if (ref.range < 20) {
       zoom = 13;
-    } else if (ref < 100) {
+    } else if (ref.range < 100) {
       zoom = 8;
     } else {
       zoom = 5;
     }
 
     return {
-      center: {
-        latitude: (maxLatitude + minLatitude) / 2,
-        longitude: (maxLongitude + minLongitude) / 2
-      },
+      center: ref.average,
       zoom: zoom
     };
   }
