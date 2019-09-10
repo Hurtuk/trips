@@ -209,11 +209,17 @@ export class ChartService {
       const polygonSeries = new am4maps.MapPolygonSeries();
       if (countriesNb > 1 && stays.startFrom.country.codeAlpha2 === "FR") {
         // Display trip from France to destination
-        chart.projection = new am4maps.projections.Orthographic();
+        const zoomData = this.getAverageAndRange([stays.startFrom, ...stays.visits.map(v => v.city)]);
+        if (zoomData.range < 30) {
+          chart.homeZoomLevel = 30 - Math.ceil(zoomData.range);
+          chart.projection = new am4maps.projections.Miller();
+        } else {
+          chart.projection = new am4maps.projections.Orthographic();
+          chart.backgroundSeries.mapPolygons.template.polygon.fill = am4core.color("#d0e1e5");
+          chart.backgroundSeries.mapPolygons.template.polygon.fillOpacity = 1;
+        }
         chart.deltaLatitude = -this.average([stays.startFrom.latitude, ...stays.visits.map(v => v.latitude)]);
         chart.deltaLongitude = -this.average([stays.startFrom.longitude, ...stays.visits.map(v => v.longitude)]);
-        chart.backgroundSeries.mapPolygons.template.polygon.fill = am4core.color("#d0e1e5");
-        chart.backgroundSeries.mapPolygons.template.polygon.fillOpacity = 1;
       } else if (countriesNb > 1 || trip === null) {
         // Display zoomed world on visited countries
         chart.projection = new am4maps.projections.Miller();

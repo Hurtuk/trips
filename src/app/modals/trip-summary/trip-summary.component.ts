@@ -66,10 +66,6 @@ export class TripSummaryComponent implements SummaryModal {
     return Array(length);
   }
 
-  public getTransports(): string[] {
-    return [...new Set(this.trip.visits.map(v => v.transport))];
-  }
-
   public getDateSuffixe(page: number, inPage: number, date: string): string {
     if (!date) {
       return '';
