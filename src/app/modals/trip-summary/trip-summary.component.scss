@@ -273,7 +273,11 @@ i {
             &:nth-child(even) {
                 align-self: flex-end;
                 transform: rotate(3deg);
-                margin-top: -55px;
+                margin-top: -35px;
+            }
+
+            &:nth-child(odd) {
+                margin-top: -15px;
             }
         }
     }
