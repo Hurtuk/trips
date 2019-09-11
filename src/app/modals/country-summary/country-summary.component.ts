@@ -14,6 +14,7 @@ export class CountrySummaryComponent implements SummaryModal {
 
   public entity: Country;
   public trips: SimpleTrip[];
+  public photoUrl = null;
 
   constructor(
     private chartService: ChartService,

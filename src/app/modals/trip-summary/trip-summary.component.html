@@ -1,4 +1,4 @@
-<section>
+<section #bookcontent>
     <div class="page page-left" id="summary" [class.shown]="currentPage === 1">
         <ng-container *ngIf="trip">
             <h1>{{trip.title}}</h1>
@@ -29,10 +29,10 @@
             class="page chapter page-{{ pageChapter.key === 1 ? 'right': ((!isLast && pageChapter.value.length === 1) || chapter.images.length || chapter.from) ? 'double': i % 2 ? 'right': 'left' }}"
             [class.shown]="pageChapter.key === currentPage">
             <!-- Page buttons -->
-            <button class="btn-left" type="button" (click)="currentPage = currentPage - 1" *ngIf="currentPage > 1 && i % 2 === 0">
+            <button class="btn-left" type="button" (click)="changePage(currentPage - 1)" *ngIf="currentPage > 1 && i % 2 === 0">
                 <i class="material-icons">keyboard_arrow_left</i>
             </button>
-            <button class="btn-right" type="button" (click)="currentPage = currentPage + 1" *ngIf="(chapters.length > 1 && currentPage === 1) || (chapter.number < chapters.length && (i % 2 === 1 || chapter.images.length || chapter.from))">
+            <button class="btn-right" type="button" (click)="changePage(currentPage + 1)" *ngIf="(chapters.length > 1 && currentPage === 1) || (chapter.number < chapters.length && (i % 2 === 1 || chapter.images.length || chapter.from))">
                 <i class="material-icons">keyboard_arrow_right</i>
             </button>
             <!-- Photos -->
@@ -42,20 +42,22 @@
             </div>
             <!-- Chapter content -->
             <div>
-                <h3>Chapitre {{ chapter.number }}</h3>
-                <h4>{{ chapter.title }}</h4>
-                <div class="infos" *ngIf="chapter.transports.length || chapter.city">
-                    <span *ngIf="chapter.city"><i class="material-icons">my_location</i> {{ chapter.city.name }}, {{chapter.city.country.name }}</span>
-                    <div *ngIf="chapter.transports.length">
-                        <img src="assets/icons/{{t}}" *ngFor="let t of chapter.transports" />
+                <div class="mobile-scroll">
+                    <h3>Chapitre {{ chapter.number }}</h3>
+                    <h4>{{ chapter.title }}</h4>
+                    <div class="infos" *ngIf="chapter.transports.length || chapter.city">
+                        <span *ngIf="chapter.city"><i class="material-icons">my_location</i> {{ chapter.city.name }}, {{chapter.city.country.name }}</span>
+                        <div *ngIf="chapter.transports.length">
+                            <img src="assets/icons/{{t}}" *ngFor="let t of chapter.transports" />
+                        </div>
                     </div>
+                    <article>
+                        <div class="chapter-content">
+                            <h5 *ngIf="chapter.date">{{ chapter.date + getDateSuffixe(pageChapter.key, i, chapter.date) }},</h5>
+                            <div [innerHtml]="chapter.content | nl2p"></div>
+                        </div>
+                    </article>
                 </div>
-                <article>
-                    <div class="chapter-content">
-                        <h5 *ngIf="chapter.date">{{ chapter.date + getDateSuffixe(pageChapter.key, i, chapter.date) }},</h5>
-                        <div [innerHtml]="chapter.content | nl2p"></div>
-                    </div>
-                </article>
                 <span class="chapter-number">{{ chapter.number }}/{{ chapters.length }}</span>
             </div>
         </div>

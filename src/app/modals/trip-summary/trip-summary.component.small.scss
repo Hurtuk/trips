@@ -1,0 +1,89 @@
+@media (max-width: 800px) {
+    h1 {
+        font-size: 2.3em !important;
+    }
+
+    .calendar {
+        font-size: 1.1em;
+    }
+
+    .chapter {
+        display: flex;
+        position: relative;
+    
+        > div:not(.photo-page) {
+            display: flex;
+
+            > div {
+                flex: 1;
+                position: relative;
+                display: block;
+            }
+
+            .mobile-scroll {
+                max-height: 100%;
+                overflow: auto;
+            }
+        }
+    }
+}
+
+@media (max-width: 500px) {
+    :host {
+        &::after {
+            background-position: right;
+        }
+    }
+
+    section {
+        flex-direction: column;
+        overflow-y: auto;
+
+        > * {
+            flex: unset !important;
+            overflow: unset !important;
+        }
+    }
+
+    #summary {
+        flex: 1 0 auto;
+        min-height: 350px;
+    }
+
+    .chapter {
+        flex-direction: column;
+
+        button {
+            position: fixed;
+            top: calc(50vh - 75px);
+
+            &.btn-right {
+                right: 3vw;
+            }
+
+            &.btn-left {
+                left: 3vw;
+            }
+        }
+
+        &.page-double {
+            > div {
+                + div {
+                    padding: 30px;
+                }
+            }
+        }
+    }
+
+    .photo-page {
+        min-height: 30vh;
+        overflow-y: unset;
+        display: block;
+    }
+
+    .page-left {
+        .chapter-number {
+            display: none;
+        }
+    }
+}

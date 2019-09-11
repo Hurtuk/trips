@@ -36,8 +36,8 @@ export class ModalComponent implements OnDestroy {
       this.currentDialog = this.modalService.open(component, {
         width: '1000px',
         height: '600px',
-        maxWidth: '90vw',
-        maxHeight: '90vh'
+        maxWidth: '97vw',
+        maxHeight: '97vh'
       });
       (this.currentDialog.componentInstance as SummaryModal).initFromId(params.id);
 

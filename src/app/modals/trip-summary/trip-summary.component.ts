@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { SummaryModal } from '../summary-modal';
 import { ChartService } from 'src/app/services/chart.service';
 import { TripService } from 'src/app/services/trip.service';
@@ -8,7 +8,7 @@ import { Chapter } from 'src/app/model/chapter';
 @Component({
   selector: 'app-trip-summary',
   templateUrl: './trip-summary.component.html',
-  styleUrls: ['./trip-summary.component.scss']
+  styleUrls: ['./trip-summary.component.scss', './trip-summary.component.small.scss']
 })
 export class TripSummaryComponent implements SummaryModal {
 
@@ -16,6 +16,7 @@ export class TripSummaryComponent implements SummaryModal {
   public chapters: Chapter[];
   public currentPage = 1;
   public chaptersByPage = new Map<number, Chapter[]>();
+  @ViewChild('bookcontent', { static: true }) section: ElementRef;
 
   constructor(
     private chartService: ChartService,
@@ -64,6 +65,11 @@ export class TripSummaryComponent implements SummaryModal {
 
   public array(length: number): number[] {
     return Array(length);
+  }
+
+  public changePage(newPage: number) {
+    this.currentPage = newPage;
+    this.section.nativeElement.scrollTop = 0;
   }
 
   public getDateSuffixe(page: number, inPage: number, date: string): string {

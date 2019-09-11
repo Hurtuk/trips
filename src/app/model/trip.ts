@@ -7,4 +7,5 @@ export class Trip {
     peopleNb: number;
     visits: Visit[];
     brought: string;
+    transports: string[];
 }

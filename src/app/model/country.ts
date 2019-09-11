@@ -3,4 +3,5 @@ export class Country {
     codeAlpha3: string;
     name: string;
     count?: number;
+    country = null;
 }

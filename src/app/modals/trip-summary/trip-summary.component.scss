@@ -46,7 +46,13 @@ section {
     > div {
         flex: 1;
         padding: 30px;
-        overflow: auto;
+    }
+
+    .mobile-scroll {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
     }
 }
 
