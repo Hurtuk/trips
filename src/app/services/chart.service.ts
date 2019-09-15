@@ -197,8 +197,9 @@ export class ChartService {
       } else {
         stays = this.tripService.getCitiesCountriesByTrip(trip);
       }
+      const differentCities = [stays.startFrom, ...stays.visits.map(v => v.city)];
       // Focus on one region or the way to
-      const countriesNb = [...new Set([stays.startFrom.country.codeAlpha2, ...stays.visits.map(v => v.city.country.codeAlpha2)])].length;
+      const countriesNb = [...new Set(differentCities.map(c => c.country.codeAlpha2))].length;
       // Create the chart
       const chart = am4core.create(elementId, am4maps.MapChart);
       if (!this.tempChart.get(modal)) {
@@ -206,61 +207,37 @@ export class ChartService {
       }
       this.tempChart.get(modal).push(chart);
       chart.language.locale = am4lang_fr_FR.default;
+      chart.projection = new am4maps.projections.Miller();
       const polygonSeries = new am4maps.MapPolygonSeries();
-      if (countriesNb > 1 && stays.startFrom.country.codeAlpha2 === "FR") {
-        // Display trip from France to destination
-        const zoomData = this.getAverageAndRange([stays.startFrom, ...stays.visits.map(v => v.city)]);
-        if (zoomData.range < 30) {
-          chart.homeZoomLevel = 30 - Math.ceil(zoomData.range);
-          chart.projection = new am4maps.projections.Miller();
-        } else {
-          chart.projection = new am4maps.projections.Orthographic();
-          chart.backgroundSeries.mapPolygons.template.polygon.fill = am4core.color("#d0e1e5");
-          chart.backgroundSeries.mapPolygons.template.polygon.fillOpacity = 1;
-        }
-        chart.deltaLatitude = -this.average([stays.startFrom.latitude, ...stays.visits.map(v => v.latitude)]);
-        chart.deltaLongitude = -this.average([stays.startFrom.longitude, ...stays.visits.map(v => v.longitude)]);
-      } else if (countriesNb > 1 || trip === null) {
-        // Display zoomed world on visited countries
-        chart.projection = new am4maps.projections.Miller();
-        const zoomData = this.calculateZoomPoint([stays.startFrom, ...stays.visits.map(v => v.city)]);
-        chart.homeZoomLevel = zoomData.zoom;
-        chart.homeGeoPoint = zoomData.center;
-      } else {
-        // Display single country
-        chart.projection = new am4maps.projections.Miller();
-        polygonSeries.include = [stays.startFrom.country.codeAlpha2];
-        const zoomData = this.getAverageAndRange([stays.startFrom, ...stays.visits.map(v => v.city)]);
-        if (stays.visits.length > 2 && zoomData.range < 3) {
-          chart.homeZoomLevel = 6 - Math.ceil(zoomData.range);
-          chart.homeGeoPoint = zoomData.average;
-        }
+      const polygonTemplate = polygonSeries.mapPolygons.template;
+      // BG color
+      chart.backgroundSeries.mapPolygons.template.polygon.fill = am4core.color("#bfa58d");
+      chart.backgroundSeries.mapPolygons.template.polygon.fillOpacity = .5;
+      // Countries color
+      polygonTemplate.fill = am4core.color("#e9d0a9");
+      polygonTemplate.stroke = am4core.color("#bfa58d");
+      polygonTemplate.strokeWidth = 1;
+      // Select countries
+      if (countriesNb > 1) {
+        let ss = polygonTemplate.states.create("active");
+        ss.properties.fill = this.VISITED_COLOR;
       }
+      // Zoom
+      this.zoomOnCities(chart, polygonSeries, differentCities);
       // Colors
       chart.background.fillOpacity = 0;
       // Create the data
       chart.geodata = am4geodata_worldHigh;
       polygonSeries.useGeodata = true;
-      // Color
-      const polygonTemplate = polygonSeries.mapPolygons.template;
-      polygonTemplate.fill = am4core.color("#9F774A");
-      polygonTemplate.stroke = am4core.color("#7c5b36");
-      polygonTemplate.strokeWidth = 1;
       chart.series.push(polygonSeries);
       // Lines
       const lineSeries = chart.series.push(new am4maps.MapLineSeries());
-      lineSeries.data = [{
-        "multiGeoLine": [
-          [
-            { latitude: stays.startFrom.latitude, longitude: stays.startFrom.longitude },
-            ...stays.visits.map(v => ({ latitude: v.latitude, longitude: v.longitude }))
-          ]
-        ]
-      }];
-      lineSeries.mapLines.template.line.stroke = am4core.color("#000000");
+      lineSeries.data = [{ "multiGeoLine": [differentCities.map(v => ({ latitude: v.latitude, longitude: v.longitude }))] }];
+      lineSeries.mapLines.template.line.strokeWidth = 2;
       lineSeries.mapLines.template.line.strokeOpacity = 0.5;
-      lineSeries.mapLines.template.line.strokeWidth = 1;
-      lineSeries.mapLines.template.line.strokeDasharray = "2,2";
+      lineSeries.mapLines.template.line.stroke = am4core.color("#000000");
+      lineSeries.mapLines.template.line.nonScalingStroke = true;
+      lineSeries.zIndex = 10;
       // Generate the cities
       const imageSeries = chart.series.push(new am4maps.MapImageSeries());
       const imageSeriesTemplate = imageSeries.mapImages.template;
@@ -274,43 +251,65 @@ export class ChartService {
       marker.tooltipText = "{name}";
       imageSeriesTemplate.propertyFields.latitude = "latitude";
       imageSeriesTemplate.propertyFields.longitude = "longitude";
-      imageSeries.data = [stays.startFrom, ...stays.visits.map(v => ({ name: v.city.name, latitude: v.latitude, longitude: v.longitude }))];
+      imageSeries.data = differentCities;
+      // Transport
+      this.createTransportCities(lineSeries, imageSeries);
     });
-
-    return false;
   }
 
-  private getAverageAndRange(cities: City[]): { average: { longitude: number, latitude: number }, range: number } {
-    const maxLatitude = Math.max(...cities.map(c => c.latitude));
-    const maxLongitude = Math.max(...cities.map(c => c.longitude));
-    const minLatitude = Math.min(...cities.map(c => c.latitude));
-    const minLongitude = Math.min(...cities.map(c => c.longitude));
-    return {
-      average: {
-        latitude: (maxLatitude + minLatitude) / 2,
-        longitude: (maxLongitude + minLongitude) / 2
-      },
-      range: Math.max(maxLatitude - minLatitude, maxLongitude - minLongitude)
-    };
+  private zoomOnCities(chart: am4maps.MapChart, polygonSeries: am4maps.MapPolygonSeries, cities: City[]) {
+    chart.maxZoomLevel = 800;
+    chart.events.on("ready", function() {
+      let maxLatitude: number, minLatitude: number, minLongitude: number, maxLongitude: number;
+
+      for (let c of cities) {
+        if (maxLatitude == undefined || (c.latitude > maxLatitude)) {
+          maxLatitude = c.latitude;
+        }
+        if (minLatitude == undefined || (c.latitude < minLatitude)) {
+          minLatitude = c.latitude;
+        }
+        if (minLongitude == undefined || (c.longitude < minLongitude)) {
+          minLongitude = c.longitude;
+        }
+        if (maxLongitude == undefined || (c.longitude > maxLongitude)) {
+          maxLongitude = c.longitude;
+        }
+
+        polygonSeries.getPolygonById(c.country.codeAlpha2).isActive = true;
+      }
+
+      chart.zoomToRectangle(maxLatitude, maxLongitude, minLatitude, minLongitude, .8, true, 3000);
+    });
   }
 
-  private calculateZoomPoint(cities: City[]): {center: { latitude: number, longitude: number }, zoom: number } {
-    const ref = this.getAverageAndRange(cities);
-    let zoom: number;
-    if (ref.range < 1) {
-      zoom = 32;
-    } else if (ref.range < 20) {
-      zoom = 13;
-    } else if (ref.range < 100) {
-      zoom = 8;
-    } else {
-      zoom = 5;
+  private createTransportCities(lineSeries: am4maps.MapLineSeries, cities: am4maps.MapImageSeries) {
+    console.log(cities);
+    for (let i = 1; i < cities.mapImages.length; i++) {
+      let line = lineSeries.mapLines.create();
+      line.imagesToConnect = [cities.mapImages.getIndex(i-1), cities.mapImages.getIndex(i)];
     }
 
-    return {
-      center: ref.average,
-      zoom: zoom
-    };
+    setTimeout(() => {
+    console.log(lineSeries.mapLines.getIndex(0));
+    }, 0); // TODO fix beurk
+
+    let plane = lineSeries.mapLines.getIndex(0).lineObjects.create();
+    plane.position = 0;
+    plane.width = 48;
+    plane.height = 48;
+
+    plane.adapter.add("scale", function(scale, target) {
+        return 0.5 * (1 - (Math.abs(0.5 - target.position)));
+    })
+
+    let planeImage = plane.createChild(am4core.Sprite);
+    planeImage.scale = 0.08;
+    planeImage.horizontalCenter = "middle";
+    planeImage.verticalCenter = "middle";
+    planeImage.path = "m2,106h28l24,30h72l-44,-133h35l80,132h98c21,0 21,34 0,34l-98,0 -80,134h-35l43,-133h-71l-24,30h-28l15,-47";
+    planeImage.fill = this.FULL_VISITED_COLOR;
+    planeImage.strokeOpacity = 0;
   }
 
   /**
