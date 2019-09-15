@@ -4,11 +4,12 @@ import { ChartService } from 'src/app/services/chart.service';
 import { TripService } from 'src/app/services/trip.service';
 import { SimpleTrip } from 'src/app/model/simple-trip';
 import { City } from 'src/app/model/city';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-city-summary',
   templateUrl: '../summary/summary.component.html',
-  styleUrls: ['../summary/summary.component.scss']
+  styleUrls: ['../summary/summary.component.scss', '../summary/summary.component.small.scss']
 })
 export class CitySummaryComponent implements SummaryModal {
 
@@ -18,8 +19,13 @@ export class CitySummaryComponent implements SummaryModal {
 
   constructor(
     private chartService: ChartService,
-    private tripService: TripService
+    private tripService: TripService,
+    private dialogRef: MatDialogRef<CitySummaryComponent>
   ) { }
+  
+  public close() {
+    this.dialogRef.close();
+  }
 
   public initFromId(idStr: string): void {
     const id = parseInt(idStr);

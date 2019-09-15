@@ -108,6 +108,12 @@ export class ChartService {
       marker.tooltipText = "{name}";
       imageSeriesTemplate.propertyFields.latitude = "latitude";
       imageSeriesTemplate.propertyFields.longitude = "longitude";
+      imageSeriesTemplate.events.on('hit', ev =>
+        this.zone.run(() => {
+          // modal.close(); TODO : Why doesn't it work?
+          this.route.navigate(['city/' + ev.target.dataItem.dataContext['id']]);
+        })
+      );
       this.visitedCities.subscribe(cities => {
         imageSeries.data = cities.filter(c => c.country.codeAlpha2 === countryCode);
       });
@@ -182,7 +188,7 @@ export class ChartService {
     this.zone.runOutsideAngular(() => {
       let stays: { startFrom: City, visits: Visit[]; };
       if (trip === null) {
-        stays = { startFrom: cities[0], visits: [{ id: null, startDate: null, endDate: null, transport: null, city: cities[1], latitude: cities[1].latitude, longitude: cities[1].longitude }] };
+        stays = { startFrom: cities[0], visits: [{ id: null, startDate: null, endDate: null, transport: cities[1].transport, city: cities[1], latitude: cities[1].latitude, longitude: cities[1].longitude }] };
       } else {
         stays = this.tripService.getCitiesCountriesByTrip(trip);
       }
@@ -284,6 +290,7 @@ export class ChartService {
   }
 
   private createTransportCities(lineSeries: am4maps.MapLineSeries, citiesSeries: am4maps.MapImageSeries, transports: {city: City, transport: string}[]) {
+    console.log(transports);
     const toWest: boolean[] = [];
     for (let i = 1; i < citiesSeries.mapImages.length; i++) {
       let line = lineSeries.mapLines.create();

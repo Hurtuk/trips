@@ -4,6 +4,7 @@ import { ChartService } from 'src/app/services/chart.service';
 import { TripService } from 'src/app/services/trip.service';
 import { Trip } from 'src/app/model/trip';
 import { Chapter } from 'src/app/model/chapter';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-trip-summary',
@@ -20,8 +21,13 @@ export class TripSummaryComponent implements SummaryModal {
 
   constructor(
     private chartService: ChartService,
-    private tripService: TripService
+    private tripService: TripService,
+    private dialogRef: MatDialogRef<TripSummaryComponent>
   ) { }
+
+  public close() {
+    this.dialogRef.close();
+  }
 
   public initFromId(id: number): void {
     this.tripService.getTripById(id)
