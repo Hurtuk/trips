@@ -169,27 +169,16 @@ export class ChartService {
     imageSeriesTemplate.propertyFields.longitude = "longitude";
     imageSeriesTemplate.events.on('hit', ev =>
       this.zone.run(() => {
-        const count = ev.target.dataItem.dataContext['value'];
-        const id = ev.target.dataItem.dataContext['id'];
-        //if (count > 1) {
-          this.route.navigate(['city/' + id]);
-        //} else if (count === 1) {
-          // TODO get the only trip id
-          // this.route.navigate(['trip/' + ev.target.dataItem.dataContext['id']]);
-        //}
+        this.route.navigate(['city/' + ev.target.dataItem.dataContext['id']]);
       })
     );
     this.loadCitiesData(imageSeries);
   }
 
-  private average(numbers: number[]) {
-    return numbers.reduce((prev, cur) => prev += cur, 0) / numbers.length;
-  }
-
   /**
    * Creates the trip map
   */
-  public createTrip(modal: SummaryModal, elementId: string, trip: Trip, cities: City[] = null) {
+  public createTrip(modal: SummaryModal, elementId: string, trip: Trip, cities: City[] = null, transport: string = null) {
     this.zone.runOutsideAngular(() => {
       let stays: { startFrom: City, visits: Visit[]; };
       if (trip === null) {
@@ -234,9 +223,11 @@ export class ChartService {
       const lineSeries = chart.series.push(new am4maps.MapLineSeries());
       lineSeries.data = [{ "multiGeoLine": [differentCities.map(v => ({ latitude: v.latitude, longitude: v.longitude }))] }];
       lineSeries.mapLines.template.line.strokeWidth = 2;
-      lineSeries.mapLines.template.line.strokeOpacity = 0.5;
+      lineSeries.mapLines.template.line.strokeOpacity = 0.2;
       lineSeries.mapLines.template.line.stroke = am4core.color("#000000");
       lineSeries.mapLines.template.line.nonScalingStroke = true;
+      lineSeries.mapLines.template.opacity = 1;
+      lineSeries.mapLines.template.line.opacity = 1;
       lineSeries.zIndex = 10;
       // Generate the cities
       const imageSeries = chart.series.push(new am4maps.MapImageSeries());
@@ -248,12 +239,21 @@ export class ChartService {
       marker.nonScaling = true;
       marker.horizontalCenter = "middle";
       marker.verticalCenter = "bottom";
-      marker.tooltipText = "{name}";
       imageSeriesTemplate.propertyFields.latitude = "latitude";
       imageSeriesTemplate.propertyFields.longitude = "longitude";
-      imageSeries.data = differentCities;
+      differentCities.map(c => {
+        let city = imageSeries.mapImages.create();
+        city.latitude = c.latitude;
+        city.longitude = c.longitude;
+        city.tooltipText = c.name;
+        return city;
+      });
       // Transport
-      this.createTransportCities(lineSeries, imageSeries);
+      this.createTransportCities(
+        lineSeries, imageSeries,
+        trip === null ?
+          [{city: stays.startFrom, transport: null}, {city: stays.visits[0].city, transport: stays.visits[0].transport}] :
+          [{city: stays.startFrom, transport: null}, ...stays.visits.map(v => ({city: v.city, transport: v.transport}))]);
     });
   }
 
@@ -283,33 +283,57 @@ export class ChartService {
     });
   }
 
-  private createTransportCities(lineSeries: am4maps.MapLineSeries, cities: am4maps.MapImageSeries) {
-    console.log(cities);
-    for (let i = 1; i < cities.mapImages.length; i++) {
+  private createTransportCities(lineSeries: am4maps.MapLineSeries, citiesSeries: am4maps.MapImageSeries, transports: {city: City, transport: string}[]) {
+    const toWest: boolean[] = [];
+    for (let i = 1; i < citiesSeries.mapImages.length; i++) {
       let line = lineSeries.mapLines.create();
-      line.imagesToConnect = [cities.mapImages.getIndex(i-1), cities.mapImages.getIndex(i)];
+      line.imagesToConnect = [citiesSeries.mapImages.getIndex(i-1), citiesSeries.mapImages.getIndex(i)];
+      toWest.push(transports[i - 1].city.longitude > transports[i].city.longitude);
     }
-
-    setTimeout(() => {
-    console.log(lineSeries.mapLines.getIndex(0));
-    }, 0); // TODO fix beurk
 
     let plane = lineSeries.mapLines.getIndex(0).lineObjects.create();
     plane.position = 0;
     plane.width = 48;
     plane.height = 48;
+    plane.opacity = 1;
+    plane.zIndex = 20;
 
-    plane.adapter.add("scale", function(scale, target) {
-        return 0.5 * (1 - (Math.abs(0.5 - target.position)));
-    })
-
-    let planeImage = plane.createChild(am4core.Sprite);
-    planeImage.scale = 0.08;
+    let planeImage = plane.createChild(am4core.Image);
+    planeImage.width = 40;
+    planeImage.height = 40;
+    planeImage.nonScaling = true;
     planeImage.horizontalCenter = "middle";
     planeImage.verticalCenter = "middle";
-    planeImage.path = "m2,106h28l24,30h72l-44,-133h35l80,132h98c21,0 21,34 0,34l-98,0 -80,134h-35l43,-133h-71l-24,30h-28l15,-47";
-    planeImage.fill = this.FULL_VISITED_COLOR;
-    planeImage.strokeOpacity = 0;
+    planeImage.zIndex = 20;
+    planeImage.opacity = 1;
+
+    let currentLine = 0;
+    const numLines = lineSeries.mapLines.length;
+    function animateTransport() {
+      // Source : https://www.amcharts.com/demos/animations-along-lines/
+      plane.mapLine = lineSeries.mapLines.getIndex(currentLine);
+      plane.parent = lineSeries;
+
+      // Calculate the way
+      if (toWest[currentLine]) {
+        planeImage.rotation = 180;
+        planeImage.href = "assets/icons/" + transports[currentLine+1].transport.replace(/\.png/gi, "_west.png");
+      } else {
+        planeImage.rotation = 0;
+        planeImage.href = "assets/icons/" + transports[currentLine+1].transport;
+      }
+
+      let from = 0, to = 1;
+      let animation = plane.animate({
+        from: from,
+        to: to,
+        property: "position"
+      }, 3000, transports[currentLine+1].transport === "plane.png" ? am4core.ease.sinInOut: am4core.ease.linear);
+      animation.events.on("animationended", animateTransport)
+      currentLine = (currentLine + 1) % numLines;
+    }
+    
+    animateTransport();
   }
 
   /**
@@ -335,7 +359,10 @@ export class ChartService {
     this.tripService.getVisitedCities()
       .subscribe(cities => {
         this.visitedCities.next(cities);
-        imageSeries.data = cities.filter(c => c.showGlobal);
+        const filteredCities = cities.filter(c => c.showGlobal);
+        const countriesCount = [];
+        filteredCities.map(c => c.country.codeAlpha2).forEach(country => countriesCount[country] ? countriesCount[country]++ : countriesCount[country] = 1);
+        imageSeries.data = filteredCities.filter(c => countriesCount[c.country.codeAlpha2] < 3);
       });
   }
 }

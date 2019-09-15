@@ -7,5 +7,6 @@ export class City {
     latitude?: number;
     longitude?: number;
     count?: number;
+    transport: string;
     showGlobal: boolean;
 }
