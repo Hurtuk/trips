@@ -45,6 +45,8 @@ export class ChartService {
     this.zone.runOutsideAngular(() => {
       // Create the chart
       const map = am4core.create(elementId, am4maps.MapChart);
+      map.seriesContainer.draggable = false;
+      map.seriesContainer.resizable = false;
       this.createCountries(map);
       this.createCities(map);
       map.deltaLongitude = -11;
@@ -65,6 +67,8 @@ export class ChartService {
       chart.language.locale = am4lang_fr_FR.default;
       // Colors
       chart.background.fillOpacity = 0;
+      chart.seriesContainer.draggable = false;
+      chart.seriesContainer.resizable = false;
       // Fill the data
       const polygonSeries = new am4maps.MapPolygonSeries();
       chart.projection = new am4maps.projections.Miller();
@@ -108,15 +112,18 @@ export class ChartService {
       marker.tooltipText = "{name}";
       imageSeriesTemplate.propertyFields.latitude = "latitude";
       imageSeriesTemplate.propertyFields.longitude = "longitude";
-      imageSeriesTemplate.events.on('hit', ev =>
+      // Doesn't work for now
+      /*imageSeriesTemplate.events.on('hit', ev =>
         this.zone.run(() => {
-          // modal.close(); TODO : Why doesn't it work?
+          modal.close();
           this.route.navigate(['city/' + ev.target.dataItem.dataContext['id']]);
         })
-      );
+      );*/
       this.visitedCities.subscribe(cities => {
         imageSeries.data = cities.filter(c => c.country.codeAlpha2 === countryCode);
       });
+      // Avoid manual zoom
+      chart.maxZoomLevel = 1;
     });
   }
 
@@ -201,6 +208,8 @@ export class ChartService {
         this.tempChart.set(modal, []);
       }
       this.tempChart.get(modal).push(chart);
+      chart.seriesContainer.draggable = false;
+      chart.seriesContainer.resizable = false;
       chart.language.locale = am4lang_fr_FR.default;
       chart.projection = new am4maps.projections.Miller();
       const polygonSeries = new am4maps.MapPolygonSeries();
@@ -285,12 +294,11 @@ export class ChartService {
         polygonSeries.getPolygonById(c.country.codeAlpha2).isActive = true;
       }
 
-      chart.zoomToRectangle(maxLatitude, maxLongitude, minLatitude, minLongitude, .8, true, 3000);
+      chart.zoomToRectangle(maxLatitude, maxLongitude, minLatitude, minLongitude, .75, true, 8000);
     });
   }
 
   private createTransportCities(lineSeries: am4maps.MapLineSeries, citiesSeries: am4maps.MapImageSeries, transports: {city: City, transport: string}[]) {
-    console.log(transports);
     const toWest: boolean[] = [];
     for (let i = 1; i < citiesSeries.mapImages.length; i++) {
       let line = lineSeries.mapLines.create();
