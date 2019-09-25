@@ -191,7 +191,7 @@ export class ChartService {
   /**
    * Creates the trip map
   */
-  public createTrip(modal: SummaryModal, elementId: string, trip: Trip, cities: City[] = null, transport: string = null) {
+  public createTrip(modal: SummaryModal, elementId: string, trip: Trip, cities: City[] = null) {
     this.zone.runOutsideAngular(() => {
       let stays: { startFrom: City, visits: Visit[]; };
       if (trip === null) {

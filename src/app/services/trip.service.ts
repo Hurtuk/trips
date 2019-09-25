@@ -53,12 +53,12 @@ export class TripService {
     if ((new Set(trip.visits.map(v => v.city.country.codeAlpha2))).size === 1 && trip.visits[0].city.country.codeAlpha2 === "FR") {
       // France only
       results.startFrom = trip.visits[0].cityFrom;
-      results.visits = trip.visits;
+      results.visits = trip.visits.filter(v => v.startDate != v.endDate || v.transportBack === null);
     } else {
       if (trip.visits[0].endDate < trip.visits[trip.visits.length - 1].endDate) {
         results.startFrom = trip.visits[0].city;
         for (let i = 1; i < trip.visits.length; i++) {
-          if (trip.visits[i].cityFrom) {
+          if (trip.visits[i].cityFrom && (trip.visits[i].startDate != trip.visits[i].endDate || trip.visits[i].transportBack === null)) {
             results.visits.push(trip.visits[i]);
           }
         }

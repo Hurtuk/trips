@@ -5,6 +5,7 @@ import { TripService } from 'src/app/services/trip.service';
 import { Trip } from 'src/app/model/trip';
 import { Chapter } from 'src/app/model/chapter';
 import { MatDialogRef } from '@angular/material/dialog';
+import { City } from 'src/app/model/city';
 
 @Component({
   selector: 'app-trip-summary',
@@ -18,6 +19,7 @@ export class TripSummaryComponent implements SummaryModal {
   public currentPage = 1;
   public chaptersByPage = new Map<number, Chapter[]>();
   @ViewChild('bookcontent', { static: true }) section: ElementRef;
+  public showedCities: City[];
 
   constructor(
     private chartService: ChartService,
@@ -34,6 +36,7 @@ export class TripSummaryComponent implements SummaryModal {
       .subscribe(t => {
         this.trip = t;
         this.chartService.createTrip(this, 'global-map', this.trip);
+        this.showedCities = this.trip.visits.filter(v => v.startDate != v.endDate || !v.transportBack).map(v => v.city);
       });
     this.tripService.getChaptersByTrip(id)
       .subscribe(c => {
@@ -66,7 +69,7 @@ export class TripSummaryComponent implements SummaryModal {
   }
 
   public citiesToString(): string {
-    return this.trip.visits.map(v => v.city.name).join(' — ');
+    return this.showedCities.map(v => v.name).join(' — ');
   }
 
   public array(length: number): number[] {

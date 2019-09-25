@@ -24,7 +24,6 @@ export class CountrySummaryComponent implements SummaryModal {
   ) { }
   
   public close() {
-    console.log('close country');
     this.dialogRef.close();
   }
 

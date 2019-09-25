@@ -24,7 +24,6 @@ export class CitySummaryComponent implements SummaryModal {
   ) { }
   
   public close() {
-    console.log('close city');
     this.dialogRef.close();
   }
 
