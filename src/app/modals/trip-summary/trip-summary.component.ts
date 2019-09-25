@@ -57,7 +57,7 @@ export class TripSummaryComponent implements SummaryModal {
           // Creating maps
           setTimeout(() => {
             if (chapter.from && chapter.to) {
-              this.chartService.createTrip(this, 'map-chapter-' + chapter.number, null, [chapter.from, chapter.to], chapter.to.transport);
+              this.chartService.createTrip(this, 'map-chapter-' + chapter.number, null, [chapter.from, chapter.to]);
             }
           }, 0);
         });
