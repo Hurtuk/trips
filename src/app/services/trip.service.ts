@@ -74,4 +74,8 @@ export class TripService {
   public getChaptersByTrip(idTrip: number): Observable<Chapter[]> {
     return this.http.get<Chapter[]>(this.urlBuilder.buildUrl('getChaptersByTripId', idTrip));
   }
+
+  public getCosts(): Observable<{cities: string[], transportCost: number, stayCost: number, days: number, km: number}> {
+    return this.http.get<{cities: string[], transportCost: number, stayCost: number, days: number, km: number}>(this.urlBuilder.buildUrl('getCosts'));
+  }
 }

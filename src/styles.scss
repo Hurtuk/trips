@@ -35,3 +35,19 @@ mat-dialog-container {
         flex: 1;
     }
 }
+
+.btn-close {
+    display: none;
+    border: 0;
+    background: transparent;
+    position: absolute;
+    right: -5px;
+    top: 0;
+    color: #653711;
+    font-size: 4em;
+    font-weight: bold;
+    
+    @media (max-width: 800px) {
+        display: block;
+    }
+}

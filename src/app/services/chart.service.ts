@@ -24,7 +24,7 @@ export class ChartService {
   private VISITED_COLOR = am4core.color("#d86d61");
   private FULL_VISITED_COLOR = am4core.color("#b53300");
   private visitedCities: BehaviorSubject<City[]> = new BehaviorSubject([]);
-  private tempChart = new Map<SummaryModal, am4maps.MapChart[]>();
+  private tempChart = new Map<any, am4maps.MapChart[]>();
 
   constructor(
     private zone: NgZone,
@@ -32,9 +32,9 @@ export class ChartService {
     private tripService: TripService
   ) { }
 
-  public disposeTempChart(modal: SummaryModal) {
-    if (this.tempChart.get(modal)) {
-      this.tempChart.get(modal).map(chart => chart.dispose());
+  public disposeTempChart(chartParent: any) {
+    if (this.tempChart.get(chartParent)) {
+      this.tempChart.get(chartParent).map(chart => chart.dispose());
     }
   }
 

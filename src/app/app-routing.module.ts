@@ -15,6 +15,10 @@ const routes: Routes = [
   {
     path: 'trip/:id',
     component: ModalComponent
+  },
+  {
+    path: 'costs',
+    component: ModalComponent
   }
 ];
 

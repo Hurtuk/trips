@@ -17,6 +17,7 @@ import { TripRecapComponent } from './modals/trip-recap/trip-recap.component';
 import { CitySummaryComponent } from './modals/city-summary/city-summary.component';
 import { Nl2pPipe } from './pipes/nl2p.pipe';
 import { PhotoComponent } from './photo/photo.component';
+import { CostsComponent } from './modals/costs/costs.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { PhotoComponent } from './photo/photo.component';
     TripRecapComponent,
     CitySummaryComponent,
     Nl2pPipe,
-    PhotoComponent
+    PhotoComponent,
+    CostsComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +44,8 @@ import { PhotoComponent } from './photo/photo.component';
   entryComponents: [
     TripSummaryComponent,
     CountrySummaryComponent,
-    CitySummaryComponent
+    CitySummaryComponent,
+    CostsComponent
   ],
   providers: [
     UrlBuilderService
