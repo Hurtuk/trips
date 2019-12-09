@@ -2,6 +2,7 @@ import { Injectable, NgZone } from '@angular/core';
 import * as am4core from "@amcharts/amcharts4/core";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import * as am4maps from "@amcharts/amcharts4/maps";
+import * as am4charts from "@amcharts/amcharts4/charts";
 import * as am4lang_fr_FR from "@amcharts/amcharts4/lang/fr_FR";
 import am4geodata_worldLow from "@amcharts/amcharts4-geodata/worldLow";
 import am4geodata_worldHigh from "@amcharts/amcharts4-geodata/worldHigh";
@@ -24,7 +25,7 @@ export class ChartService {
   private VISITED_COLOR = am4core.color("#d86d61");
   private FULL_VISITED_COLOR = am4core.color("#b53300");
   private visitedCities: BehaviorSubject<City[]> = new BehaviorSubject([]);
-  private tempChart = new Map<any, am4maps.MapChart[]>();
+  private tempChart = new Map<any, am4charts.SerialChart[]>();
 
   constructor(
     private zone: NgZone,
@@ -269,6 +270,138 @@ export class ChartService {
         trip === null ?
           [{city: stays.startFrom, transport: null}, {city: stays.visits[0].city, transport: stays.visits[0].transport}] :
           [{city: stays.startFrom, transport: null}, ...stays.visits.map(v => ({city: v.city, transport: v.transport}))]);
+    });
+  }
+
+  public generateCosts(modal: any, elementId: string, costs: {cities: string[], transportCost: number, stayCost: number, days: number, km: number}[]) {
+    this.zone.runOutsideAngular(() => {
+      // Create the chart
+      const container = am4core.create(elementId, am4core.Container);
+      container.layout = "grid";
+      container.fixedWidthGrid = false;
+      container.width = am4core.percent(100);
+      container.height = am4core.percent(100);
+
+      // Total costs
+      let chart = container.createChild(am4charts.XYChart);
+      chart.width = am4core.percent(45);
+      chart.height = 70;
+
+      chart.data = costs.map(c => ({name: c.cities.join(', '), transport: c.transportCost, stay: c.stayCost}));
+
+      /*chart.titles.template.fontSize = 10;
+      chart.titles.template.textAlign = "left";
+      chart.titles.template.isMeasured = false;
+      chart.titles.create().text = title;*/
+
+      chart.padding(20, 5, 2, 5);
+
+      let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+      categoryAxis.dataFields.category = "name";
+      categoryAxis.renderer.grid.template.location = 0;
+
+      let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+      valueAxis.min = 0;
+      /*valueAxis.renderer.grid.template.disabled = true;
+      valueAxis.renderer.baseGrid.disabled = true;
+      valueAxis.renderer.labels.template.disabled = true;
+      valueAxis.cursorTooltipEnabled = false;*/
+
+      /*chart.cursor = new am4charts.XYCursor();
+      chart.cursor.lineY.disabled = true;*/
+
+      // Set up series
+      let series = chart.series.push(new am4charts.ColumnSeries());
+      series.name = "Transport";
+      series.dataFields.valueY = "transport";
+      series.dataFields.categoryX = "name";
+      series.sequencedInterpolation = true;
+      // Make it stacked
+      series.stacked = true;
+      // Configure columns
+      series.columns.template.width = am4core.percent(60);
+      series.columns.template.tooltipText = "[bold]{name}[/]\n[font-size:14px]{categoryX}: {valueY}";
+      // Add label
+      let labelBullet = series.bullets.push(new am4charts.LabelBullet());
+      labelBullet.label.text = "{valueY}";
+      labelBullet.locationY = 0.5;
+      //series.columns.template.fill = color;
+
+
+
+
+
+
+      if (!this.tempChart.get(modal)) {
+        this.tempChart.set(modal, []);
+      }
+
+
+
+
+
+      //this.tempChart.get(modal).push(chart);
+
+
+
+
+
+
+      /*chart.seriesContainer.draggable = false;
+      chart.seriesContainer.resizable = false;
+      chart.language.locale = am4lang_fr_FR.default;
+      chart.projection = new am4maps.projections.Miller();
+      const polygonSeries = new am4maps.MapPolygonSeries();
+      const polygonTemplate = polygonSeries.mapPolygons.template;
+      // BG color
+      chart.backgroundSeries.mapPolygons.template.polygon.fill = am4core.color("#bfa58d");
+      chart.backgroundSeries.mapPolygons.template.polygon.fillOpacity = .5;
+      // Countries color
+      polygonTemplate.fill = am4core.color("#e9d0a9");
+      polygonTemplate.stroke = am4core.color("#bfa58d");
+      polygonTemplate.strokeWidth = 1;
+      // Select countries
+      if (countriesNb > 1) {
+        let ss = polygonTemplate.states.create("active");
+        ss.properties.fill = this.VISITED_COLOR;
+      }
+      // Zoom
+      this.zoomOnCities(chart, polygonSeries, differentCities);
+      // Colors
+      chart.background.fillOpacity = 0;
+      // Create the data
+      chart.geodata = am4geodata_worldHigh;
+      polygonSeries.useGeodata = true;
+      chart.series.push(polygonSeries);
+      // Lines
+      const lineSeries = chart.series.push(new am4maps.MapLineSeries());
+      lineSeries.data = [{ "multiGeoLine": [differentCities.map(v => ({ latitude: v.latitude, longitude: v.longitude }))] }];
+      lineSeries.mapLines.template.line.strokeWidth = 2;
+      lineSeries.mapLines.template.line.strokeOpacity = 0.2;
+      lineSeries.mapLines.template.line.stroke = am4core.color("#000000");
+      lineSeries.mapLines.template.line.nonScalingStroke = true;
+      lineSeries.mapLines.template.opacity = 1;
+      lineSeries.mapLines.template.line.opacity = 1;
+      lineSeries.zIndex = 10;
+      // Generate the cities
+      const imageSeries = chart.series.push(new am4maps.MapImageSeries());
+      const imageSeriesTemplate = imageSeries.mapImages.template;
+      const marker = imageSeriesTemplate.createChild(am4core.Image);
+      marker.href = "assets/point.png";
+      marker.width = 40;
+      marker.height = 40;
+      marker.nonScaling = true;
+      marker.horizontalCenter = "middle";
+      marker.verticalCenter = "bottom";
+      imageSeriesTemplate.propertyFields.latitude = "latitude";
+      imageSeriesTemplate.propertyFields.longitude = "longitude";
+      differentCities.map(c => {
+        let city = imageSeries.mapImages.create();
+        city.latitude = c.latitude;
+        city.longitude = c.longitude;
+        city.tooltipText = c.name;
+        return city;
+      });*/
     });
   }
 

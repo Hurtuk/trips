@@ -19,7 +19,7 @@ export class CostsComponent implements OnInit, OnDestroy {
   public ngOnInit() {
     this.tripService.getCosts()
       .subscribe(costs => {
-
+        this.chartService.generateCosts(this, "chart", costs);
       });
   }
   
