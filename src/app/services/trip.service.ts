@@ -75,7 +75,7 @@ export class TripService {
     return this.http.get<Chapter[]>(this.urlBuilder.buildUrl('getChaptersByTripId', idTrip));
   }
 
-  public getCosts(): Observable<{cities: string[], transportCost: number, stayCost: number, days: number, km: number}[]> {
-    return this.http.get<{cities: string[], transportCost: number, stayCost: number, days: number, km: number}[]>(this.urlBuilder.buildUrl('getCosts'));
+  public getCosts(): Observable<{year: number, cities: string[], transportCost: number, stayCost: number, days: number, km: number}[]> {
+    return this.http.get<{year: number, cities: string[], transportCost: number, stayCost: number, days: number, km: number}[]>(this.urlBuilder.buildUrl('getCosts'));
   }
 }

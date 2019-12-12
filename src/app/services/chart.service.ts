@@ -273,21 +273,20 @@ export class ChartService {
     });
   }
 
-  public generateCosts(modal: any, elementId: string, costs: {cities: string[], transportCost: number, stayCost: number, days: number, km: number}[]) {
+  public generateCosts(modal: any, elementId: string, costs: {year: number, cities: string[], transportCost: number, stayCost: number, days: number, km: number}[]) {
     this.zone.runOutsideAngular(() => {
       // Create the chart
       const container = am4core.create(elementId, am4core.Container);
-      container.layout = "grid";
-      container.fixedWidthGrid = false;
+      container.layout = "vertical";
       container.width = am4core.percent(100);
       container.height = am4core.percent(100);
 
       // Total costs
       let chart = container.createChild(am4charts.XYChart);
-      chart.width = am4core.percent(45);
-      chart.height = 70;
+      chart.width = am4core.percent(100);
+      chart.height = am4core.percent(50);
 
-      chart.data = costs.map(c => ({name: c.cities.join(', '), transport: c.transportCost, stay: c.stayCost}));
+      chart.data = costs.map(c => ({name: c.year + "\n" + c.cities.join(', '), transport: c.transportCost, stay: c.stayCost}));
 
       /*chart.titles.template.fontSize = 10;
       chart.titles.template.textAlign = "left";
@@ -298,7 +297,13 @@ export class ChartService {
 
       let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
       categoryAxis.dataFields.category = "name";
+      categoryAxis.renderer.minGridDistance = 0;
       categoryAxis.renderer.grid.template.location = 0;
+      categoryAxis.renderer.labels.template.wrap = true;
+      categoryAxis.renderer.labels.template.maxWidth = 100;
+      categoryAxis.renderer.labels.template.fontSize = ".85em";
+      categoryAxis.renderer.labels.template.textAlign = "middle";
+      
 
       let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
       valueAxis.min = 0;
@@ -320,7 +325,7 @@ export class ChartService {
       series.stacked = true;
       // Configure columns
       series.columns.template.width = am4core.percent(60);
-      series.columns.template.tooltipText = "[bold]{name}[/]\n[font-size:14px]{categoryX}: {valueY}";
+      //series.columns.template.tooltipText = "[bold]{name}[/]\n[font-size:14px]{categoryX}: {valueY}";
       // Add label
       let labelBullet = series.bullets.push(new am4charts.LabelBullet());
       labelBullet.label.text = "{valueY}";
@@ -328,7 +333,21 @@ export class ChartService {
       //series.columns.template.fill = color;
 
 
-
+      series = chart.series.push(new am4charts.ColumnSeries());
+      series.name = "Logement";
+      series.dataFields.valueY = "stay";
+      series.dataFields.categoryX = "name";
+      series.sequencedInterpolation = true;
+      // Make it stacked
+      series.stacked = true;
+      // Configure columns
+      series.columns.template.width = am4core.percent(60);
+      series.columns.template.tooltipText = "[bold]{name}[/]\n[font-size:14px]{categoryX}: {valueY}";
+      // Add label
+      labelBullet = series.bullets.push(new am4charts.LabelBullet());
+      labelBullet.label.text = "{valueY}";
+      labelBullet.locationY = 0.5;
+      //series.columns.template.fill = color;
 
 
 
