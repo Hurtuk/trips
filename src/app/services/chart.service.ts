@@ -285,51 +285,44 @@ export class ChartService {
       let chart = container.createChild(am4charts.XYChart);
       chart.width = am4core.percent(100);
       chart.height = am4core.percent(50);
+      chart.numberFormatter.numberFormat = '# €';
 
-      chart.data = costs.map(c => ({name: c.year + "\n" + c.cities.join(', '), transport: c.transportCost, stay: c.stayCost}));
-
-      /*chart.titles.template.fontSize = 10;
-      chart.titles.template.textAlign = "left";
-      chart.titles.template.isMeasured = false;
-      chart.titles.create().text = title;*/
+      chart.data = costs.map(c => ({name: c.year + "\n" + c.cities.join("\n"), transport: c.transportCost, stay: c.stayCost}));
 
       chart.padding(20, 5, 2, 5);
 
+      chart.yAxes.push(new am4charts.ValueAxis());
+
       let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
       categoryAxis.dataFields.category = "name";
-      categoryAxis.renderer.minGridDistance = 0;
+      categoryAxis.renderer.minGridDistance = 1;
       categoryAxis.renderer.grid.template.location = 0;
+
       categoryAxis.renderer.labels.template.wrap = true;
       categoryAxis.renderer.labels.template.maxWidth = 100;
-      categoryAxis.renderer.labels.template.fontSize = ".85em";
+      categoryAxis.renderer.labels.template.fontSize = ".75em";
       categoryAxis.renderer.labels.template.textAlign = "middle";
-      
-
-      let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-      valueAxis.min = 0;
-      /*valueAxis.renderer.grid.template.disabled = true;
-      valueAxis.renderer.baseGrid.disabled = true;
-      valueAxis.renderer.labels.template.disabled = true;
-      valueAxis.cursorTooltipEnabled = false;*/
-
-      /*chart.cursor = new am4charts.XYCursor();
-      chart.cursor.lineY.disabled = true;*/
 
       // Set up series
       let series = chart.series.push(new am4charts.ColumnSeries());
       series.name = "Transport";
       series.dataFields.valueY = "transport";
       series.dataFields.categoryX = "name";
-      series.sequencedInterpolation = true;
       // Make it stacked
       series.stacked = true;
       // Configure columns
       series.columns.template.width = am4core.percent(60);
-      //series.columns.template.tooltipText = "[bold]{name}[/]\n[font-size:14px]{categoryX}: {valueY}";
+      series.columns.template.tooltipText = "[font-size:13px]{valueY}";
+      series.columns.template.fillOpacity = .8;
       // Add label
-      let labelBullet = series.bullets.push(new am4charts.LabelBullet());
-      labelBullet.label.text = "{valueY}";
-      labelBullet.locationY = 0.5;
+      let bullet = series.bullets.push(new am4charts.Bullet());
+      let image = bullet.createChild(am4core.Image);
+      image.href = "/assets/icons/plane.png";
+      image.width = 30;
+      image.height = 30;
+      image.horizontalCenter = "middle";
+      image.verticalCenter = "middle";
+      bullet.locationY = .5;
       //series.columns.template.fill = color;
 
 
@@ -337,16 +330,21 @@ export class ChartService {
       series.name = "Logement";
       series.dataFields.valueY = "stay";
       series.dataFields.categoryX = "name";
-      series.sequencedInterpolation = true;
       // Make it stacked
       series.stacked = true;
       // Configure columns
       series.columns.template.width = am4core.percent(60);
-      series.columns.template.tooltipText = "[bold]{name}[/]\n[font-size:14px]{categoryX}: {valueY}";
+      series.columns.template.tooltipText = "[font-size:13px]{valueY}";
+      series.columns.template.fillOpacity = .8;
       // Add label
-      labelBullet = series.bullets.push(new am4charts.LabelBullet());
-      labelBullet.label.text = "{valueY}";
-      labelBullet.locationY = 0.5;
+      bullet = series.bullets.push(new am4charts.Bullet());
+      image = bullet.createChild(am4core.Image);
+      image.href = "/assets/icons/appartement.png";
+      image.width = 30;
+      image.height = 30;
+      image.horizontalCenter = "middle";
+      image.verticalCenter = "middle";
+      bullet.locationY = .5;
       //series.columns.template.fill = color;
 
 
