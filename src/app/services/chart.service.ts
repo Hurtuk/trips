@@ -275,44 +275,46 @@ export class ChartService {
 
   public generateCosts(modal: any, elementId: string, costs: {year: number, cities: string[], transportCost: number, stayCost: number, days: number, km: number}[]) {
     this.zone.runOutsideAngular(() => {
-      // Create the chart
-      const container = am4core.create(elementId, am4core.Container);
-      container.layout = "vertical";
-      container.width = am4core.percent(100);
-      container.height = am4core.percent(100);
-
       // Total costs
-      let chart = container.createChild(am4charts.XYChart);
-      chart.width = am4core.percent(100);
-      chart.height = am4core.percent(50);
+      let chart = am4core.create(elementId, am4charts.XYChart);
+      chart.leftAxesContainer.layout = "vertical";
       chart.numberFormatter.numberFormat = '# €';
 
-      chart.data = costs.map(c => ({name: c.year + "\n" + c.cities.join("\n"), transport: c.transportCost, stay: c.stayCost}));
+      chart.data = costs.map(c => ({name: c.year + "\n" + c.cities.join("\n"), transport: c.transportCost, stay: c.stayCost, costByNight: Math.round(c.stayCost / c.days), costByKm: Math.round(c.transportCost / (c.km / 200))}));
+
+console.log(chart.data);
 
       chart.padding(20, 5, 2, 5);
 
-      chart.yAxes.push(new am4charts.ValueAxis());
-
+      // Cities/countries names
       let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-      categoryAxis.dataFields.category = "name";
-      categoryAxis.renderer.minGridDistance = 1;
       categoryAxis.renderer.grid.template.location = 0;
-
+      categoryAxis.dataFields.category = "name";
+      categoryAxis.renderer.ticks.template.disabled = false;
+      categoryAxis.renderer.minGridDistance = 1;
       categoryAxis.renderer.labels.template.wrap = true;
       categoryAxis.renderer.labels.template.maxWidth = 100;
       categoryAxis.renderer.labels.template.fontSize = ".75em";
       categoryAxis.renderer.labels.template.textAlign = "middle";
 
-      // Set up series
+      /* FIRST CHART */
+
+      // First Y axis
+      let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+      valueAxis.tooltip.disabled = true;
+      valueAxis.zIndex = 1;
+      valueAxis.renderer.baseGrid.disabled = true;
+      valueAxis.renderer.fontSize = "0.8em";
+
+      // Transport
       let series = chart.series.push(new am4charts.ColumnSeries());
       series.name = "Transport";
       series.dataFields.valueY = "transport";
       series.dataFields.categoryX = "name";
-      // Make it stacked
-      series.stacked = true;
+      series.yAxis = valueAxis;
       // Configure columns
-      series.columns.template.width = am4core.percent(60);
-      series.columns.template.tooltipText = "[font-size:13px]{valueY}";
+      series.columns.template.width = am4core.percent(100);
+      series.columns.template.tooltipText = "[font-size:13px]Transport : {valueY}";
       series.columns.template.fillOpacity = .8;
       // Add label
       let bullet = series.bullets.push(new am4charts.Bullet());
@@ -325,16 +327,67 @@ export class ChartService {
       bullet.locationY = .5;
       //series.columns.template.fill = color;
 
-
+      // Logement
       series = chart.series.push(new am4charts.ColumnSeries());
       series.name = "Logement";
       series.dataFields.valueY = "stay";
       series.dataFields.categoryX = "name";
+      series.yAxis = valueAxis;
       // Make it stacked
       series.stacked = true;
       // Configure columns
-      series.columns.template.width = am4core.percent(60);
-      series.columns.template.tooltipText = "[font-size:13px]{valueY}";
+      series.columns.template.width = am4core.percent(100);
+      series.columns.template.tooltipText = "[font-size:13px]Logement : {valueY}";
+      series.columns.template.fillOpacity = .8;
+      // Add label
+      bullet = series.bullets.push(new am4charts.Bullet());
+      image = bullet.createChild(am4core.Image);
+      image.href = "/assets/icons/appartement.png";
+      image.width = 30;
+      image.height = 30;
+      image.horizontalCenter = "middle";
+      image.verticalCenter = "middle";
+      bullet.locationY = .5;
+      //series.columns.template.fill = color;
+
+      /* SECOND CHART */
+
+      let valueAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
+      valueAxis2.marginTop = 50;
+      valueAxis2.tooltip.disabled = true;
+      valueAxis2.renderer.baseGrid.disabled = true;
+      valueAxis2.zIndex = 3;
+      valueAxis2.renderer.fontSize = "0.8em";
+
+      series = chart.series.push(new am4charts.ColumnSeries());
+      series.name = "Prix par 200km";
+      series.dataFields.valueY = "costByKm";
+      series.dataFields.categoryX = "name";
+      series.yAxis = valueAxis2;
+      series.stacked = true;
+      // Configure columns
+      series.columns.template.width = am4core.percent(40);
+      series.columns.template.tooltipText = "[font-size:13px]Prix pour 200km : {valueY}";
+      series.columns.template.fillOpacity = .8;
+      // Add label
+      bullet = series.bullets.push(new am4charts.Bullet());
+      image = bullet.createChild(am4core.Image);
+      image.href = "/assets/icons/plane.png";
+      image.width = 30;
+      image.height = 30;
+      image.horizontalCenter = "middle";
+      image.verticalCenter = "middle";
+      bullet.locationY = .5;
+      //series.columns.template.fill = color;
+
+      series = chart.series.push(new am4charts.ColumnSeries());
+      series.name = "Prix par nuitée";
+      series.dataFields.valueY = "costByNight";
+      series.dataFields.categoryX = "name";
+      series.yAxis = valueAxis2;
+      // Configure columns
+      series.columns.template.width = am4core.percent(40);
+      series.columns.template.tooltipText = "[font-size:13px]Prix par nuit : {valueY}";
       series.columns.template.fillOpacity = .8;
       // Add label
       bullet = series.bullets.push(new am4charts.Bullet());
@@ -349,9 +402,109 @@ export class ChartService {
 
 
 
-      if (!this.tempChart.get(modal)) {
+
+      /*if (!this.tempChart.get(modal)) {
         this.tempChart.set(modal, []);
-      }
+      }*/
+
+
+
+      /*am4core.useTheme(am4themes_animated);
+
+// Create chart instance
+var chart = am4core.create(elementId, am4charts.XYChart);
+
+// Add data
+chart.data = [{
+  "date": new Date(2018, 0, 1),
+  "value": 450,
+  "value2": 362,
+  "value3": 699
+}, {
+  "date": new Date(2018, 0, 2),
+  "value": 269,
+  "value2": 450,
+  "value3": 841
+}, {
+  "date": new Date(2018, 0, 3),
+  "value": 700,
+  "value2": 358,
+  "value3": 699
+}, {
+  "date": new Date(2018, 0, 4),
+  "value": 490,
+  "value2": 367,
+  "value3": 500
+}, {
+  "date": new Date(2018, 0, 5),
+  "value": 500,
+  "value2": 485,
+  "value3": 369
+}, {
+  "date": new Date(2018, 0, 6),
+  "value": 550,
+  "value2": 354,
+  "value3": 250
+}, {
+  "date": new Date(2018, 0, 7),
+  "value": 420,
+  "value2": 350,
+  "value3": 600
+}];
+
+// Create axes
+var categoryAxis = chart.xAxes.push(new am4charts.DateAxis());
+categoryAxis.renderer.grid.template.location = 0;
+categoryAxis.renderer.minGridDistance = 30;
+
+
+// Create series
+function createSeriesAndAxis(field, name, topMargin, bottomMargin) {
+  var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+  
+  var series = chart.series.push(new am4charts.ColumnSeries());
+  series.stacked = true;
+  series.dataFields.valueY = field;
+  series.dataFields.dateX = "date";
+  series.name = name;
+  series.tooltipText = "{dateX}: [b]{valueY}[/]";
+  series.strokeWidth = 2;
+  series.yAxis = valueAxis;
+  
+  valueAxis.renderer.line.strokeOpacity = 1;
+  valueAxis.renderer.line.stroke = series.stroke;
+  valueAxis.renderer.grid.template.stroke = series.stroke;
+  valueAxis.renderer.grid.template.strokeOpacity = 0.1;
+  valueAxis.renderer.labels.template.fill = series.stroke;
+  valueAxis.renderer.minGridDistance = 20;
+  valueAxis.align = "right";
+  
+  if (topMargin && bottomMargin) {
+    valueAxis.marginTop = 10;
+    valueAxis.marginBottom = 10;
+  }
+  else {
+    if (topMargin) {
+      valueAxis.marginTop = 20;
+    }
+    if (bottomMargin) {
+      valueAxis.marginBottom = 20;
+    }
+  }
+  
+  var bullet = series.bullets.push(new am4charts.CircleBullet());
+  bullet.circle.stroke = am4core.color("#fff");
+  bullet.circle.strokeWidth = 2;
+}
+
+createSeriesAndAxis("value", "Series #1", false, true);
+createSeriesAndAxis("value2", "Series #2", true, true);
+createSeriesAndAxis("value3", "Series #3", true, false);
+
+chart.legend = new am4charts.Legend();
+chart.cursor = new am4charts.XYCursor();
+
+chart.leftAxesContainer.layout = "vertical";*/
 
 
 
@@ -360,65 +513,6 @@ export class ChartService {
       //this.tempChart.get(modal).push(chart);
 
 
-
-
-
-
-      /*chart.seriesContainer.draggable = false;
-      chart.seriesContainer.resizable = false;
-      chart.language.locale = am4lang_fr_FR.default;
-      chart.projection = new am4maps.projections.Miller();
-      const polygonSeries = new am4maps.MapPolygonSeries();
-      const polygonTemplate = polygonSeries.mapPolygons.template;
-      // BG color
-      chart.backgroundSeries.mapPolygons.template.polygon.fill = am4core.color("#bfa58d");
-      chart.backgroundSeries.mapPolygons.template.polygon.fillOpacity = .5;
-      // Countries color
-      polygonTemplate.fill = am4core.color("#e9d0a9");
-      polygonTemplate.stroke = am4core.color("#bfa58d");
-      polygonTemplate.strokeWidth = 1;
-      // Select countries
-      if (countriesNb > 1) {
-        let ss = polygonTemplate.states.create("active");
-        ss.properties.fill = this.VISITED_COLOR;
-      }
-      // Zoom
-      this.zoomOnCities(chart, polygonSeries, differentCities);
-      // Colors
-      chart.background.fillOpacity = 0;
-      // Create the data
-      chart.geodata = am4geodata_worldHigh;
-      polygonSeries.useGeodata = true;
-      chart.series.push(polygonSeries);
-      // Lines
-      const lineSeries = chart.series.push(new am4maps.MapLineSeries());
-      lineSeries.data = [{ "multiGeoLine": [differentCities.map(v => ({ latitude: v.latitude, longitude: v.longitude }))] }];
-      lineSeries.mapLines.template.line.strokeWidth = 2;
-      lineSeries.mapLines.template.line.strokeOpacity = 0.2;
-      lineSeries.mapLines.template.line.stroke = am4core.color("#000000");
-      lineSeries.mapLines.template.line.nonScalingStroke = true;
-      lineSeries.mapLines.template.opacity = 1;
-      lineSeries.mapLines.template.line.opacity = 1;
-      lineSeries.zIndex = 10;
-      // Generate the cities
-      const imageSeries = chart.series.push(new am4maps.MapImageSeries());
-      const imageSeriesTemplate = imageSeries.mapImages.template;
-      const marker = imageSeriesTemplate.createChild(am4core.Image);
-      marker.href = "assets/point.png";
-      marker.width = 40;
-      marker.height = 40;
-      marker.nonScaling = true;
-      marker.horizontalCenter = "middle";
-      marker.verticalCenter = "bottom";
-      imageSeriesTemplate.propertyFields.latitude = "latitude";
-      imageSeriesTemplate.propertyFields.longitude = "longitude";
-      differentCities.map(c => {
-        let city = imageSeries.mapImages.create();
-        city.latitude = c.latitude;
-        city.longitude = c.longitude;
-        city.tooltipText = c.name;
-        return city;
-      });*/
     });
   }
 
