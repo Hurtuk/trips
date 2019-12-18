@@ -275,14 +275,21 @@ export class ChartService {
 
   public generateCosts(modal: any, elementId: string, costs: {year: number, cities: string[], transportCost: number, stayCost: number, days: number, km: number}[]) {
     this.zone.runOutsideAngular(() => {
+      const barwidth = 70, ywidth = 70;
+      const data = costs.map(c => ({name: c.year + "\n" + c.cities.join("\n"), transport: c.transportCost, stay: c.stayCost, costByNight: Math.round(c.stayCost / c.days), costByKm: Math.round(c.transportCost / (c.km / 200))}));
+
+      let container = am4core.create(elementId, am4core.Container);
+      container.width = am4core.percent(100);
+      container.height = am4core.percent(100);
+      container.layout = "vertical";
+
+
       // Total costs
-      let chart = am4core.create(elementId, am4charts.XYChart);
-      chart.leftAxesContainer.layout = "vertical";
-      chart.numberFormatter.numberFormat = '# €';
+      let chart = container.createChild(am4charts.XYChart);
+      chart.height = am4core.percent(60);
+      chart.numberFormatter.numberFormat = '#€';
 
-      chart.data = costs.map(c => ({name: c.year + "\n" + c.cities.join("\n"), transport: c.transportCost, stay: c.stayCost, costByNight: Math.round(c.stayCost / c.days), costByKm: Math.round(c.transportCost / (c.km / 200))}));
-
-console.log(chart.data);
+      chart.data = data;
 
       chart.padding(20, 5, 2, 5);
 
@@ -305,6 +312,7 @@ console.log(chart.data);
       valueAxis.zIndex = 1;
       valueAxis.renderer.baseGrid.disabled = true;
       valueAxis.renderer.fontSize = "0.8em";
+      valueAxis.renderer.width = ywidth;
 
       // Transport
       let series = chart.series.push(new am4charts.ColumnSeries());
@@ -313,7 +321,7 @@ console.log(chart.data);
       series.dataFields.categoryX = "name";
       series.yAxis = valueAxis;
       // Configure columns
-      series.columns.template.width = am4core.percent(100);
+      series.columns.template.width = am4core.percent(barwidth);
       series.columns.template.tooltipText = "[font-size:13px]Transport : {valueY}";
       series.columns.template.fillOpacity = .8;
       // Add label
@@ -336,7 +344,7 @@ console.log(chart.data);
       // Make it stacked
       series.stacked = true;
       // Configure columns
-      series.columns.template.width = am4core.percent(100);
+      series.columns.template.width = am4core.percent(barwidth);
       series.columns.template.tooltipText = "[font-size:13px]Logement : {valueY}";
       series.columns.template.fillOpacity = .8;
       // Add label
@@ -352,29 +360,46 @@ console.log(chart.data);
 
       /* SECOND CHART */
 
-      let valueAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
-      valueAxis2.marginTop = 50;
-      valueAxis2.tooltip.disabled = true;
-      valueAxis2.renderer.baseGrid.disabled = true;
-      valueAxis2.zIndex = 3;
-      valueAxis2.renderer.fontSize = "0.8em";
+      chart = container.createChild(am4charts.XYChart);
+      chart.height = am4core.percent(40);
+      chart.numberFormatter.numberFormat = '#€';
+
+      chart.data = data;
+
+      chart.padding(2, 5, 20, 5);
+
+      // Cities/countries names
+      categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+      categoryAxis.dataFields.category = "name";
+      categoryAxis.renderer.labels.template.disabled = true;
+      categoryAxis.renderer.cellStartLocation = 0.15;
+      categoryAxis.renderer.cellEndLocation = 0.85;
+      chart.xAxes.push(categoryAxis);
+
+      // First Y axis
+      valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+      valueAxis.tooltip.disabled = true;
+      valueAxis.zIndex = 1;
+      valueAxis.renderer.baseGrid.disabled = true;
+      valueAxis.renderer.fontSize = "0.8em";
+      valueAxis.renderer.inversed = true;
+      valueAxis.renderer.width = ywidth;
 
       series = chart.series.push(new am4charts.ColumnSeries());
       series.name = "Prix par 200km";
       series.dataFields.valueY = "costByKm";
       series.dataFields.categoryX = "name";
-      series.yAxis = valueAxis2;
       series.stacked = true;
       // Configure columns
-      series.columns.template.width = am4core.percent(40);
+      series.columns.template.width = am4core.percent(barwidth);
       series.columns.template.tooltipText = "[font-size:13px]Prix pour 200km : {valueY}";
       series.columns.template.fillOpacity = .8;
       // Add label
       bullet = series.bullets.push(new am4charts.Bullet());
       image = bullet.createChild(am4core.Image);
       image.href = "/assets/icons/plane.png";
-      image.width = 30;
-      image.height = 30;
+      image.width = 20;
+      image.height = 20;
       image.horizontalCenter = "middle";
       image.verticalCenter = "middle";
       bullet.locationY = .5;
@@ -384,17 +409,16 @@ console.log(chart.data);
       series.name = "Prix par nuitée";
       series.dataFields.valueY = "costByNight";
       series.dataFields.categoryX = "name";
-      series.yAxis = valueAxis2;
       // Configure columns
-      series.columns.template.width = am4core.percent(40);
+      series.columns.template.width = am4core.percent(barwidth);
       series.columns.template.tooltipText = "[font-size:13px]Prix par nuit : {valueY}";
       series.columns.template.fillOpacity = .8;
       // Add label
       bullet = series.bullets.push(new am4charts.Bullet());
       image = bullet.createChild(am4core.Image);
       image.href = "/assets/icons/appartement.png";
-      image.width = 30;
-      image.height = 30;
+      image.width = 20;
+      image.height = 20;
       image.horizontalCenter = "middle";
       image.verticalCenter = "middle";
       bullet.locationY = .5;
