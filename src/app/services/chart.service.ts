@@ -1,5 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import * as am4core from "@amcharts/amcharts4/core";
+import am4themes_dataviz from "@amcharts/amcharts4/themes/dataviz";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import * as am4maps from "@amcharts/amcharts4/maps";
 import * as am4charts from "@amcharts/amcharts4/charts";
@@ -34,8 +35,9 @@ export class ChartService {
   ) { }
 
   public disposeTempChart(chartParent: any) {
-    if (this.tempChart.get(chartParent)) {
-      this.tempChart.get(chartParent).map(chart => chart.dispose());
+    const charts = this.tempChart.get(chartParent);
+    while (charts.length) {
+      charts.pop().dispose();
     }
   }
 
@@ -275,18 +277,27 @@ export class ChartService {
 
   public generateCosts(modal: any, elementId: string, costs: {year: number, cities: string[], transportCost: number, stayCost: number, days: number, km: number}[]) {
     this.zone.runOutsideAngular(() => {
+      if (!this.tempChart.get(modal)) {
+        this.tempChart.set(modal, []);
+      }
+
+      am4core.useTheme(am4themes_dataviz);
+
       const barwidth = 70, ywidth = 70;
-      const data = costs.map(c => ({name: c.year + "\n" + c.cities.join("\n"), transport: c.transportCost, stay: c.stayCost, costByNight: Math.round(c.stayCost / c.days), costByKm: Math.round(c.transportCost / (c.km / 200))}));
+      const data = costs.map(c => ({name: "[font-family:Caveat]" + c.year + "[/]\n[font-size:18px bold]" + c.cities.join("\n"), transport: c.transportCost, stay: c.stayCost, costByNight: Math.round(c.stayCost / c.days), costByKm: Math.round(c.transportCost / (c.km / 200))}));
 
       let container = am4core.create(elementId, am4core.Container);
       container.width = am4core.percent(100);
       container.height = am4core.percent(100);
       container.layout = "vertical";
+      container.fontFamily = '"Amatic SC", cursive';
+      container.fontSize = 25;
 
+      /* FIRST CHART */
 
       // Total costs
       let chart = container.createChild(am4charts.XYChart);
-      chart.height = am4core.percent(60);
+      chart.height = am4core.percent(75);
       chart.numberFormatter.numberFormat = '#€';
 
       chart.data = data;
@@ -303,16 +314,17 @@ export class ChartService {
       categoryAxis.renderer.labels.template.maxWidth = 100;
       categoryAxis.renderer.labels.template.fontSize = ".75em";
       categoryAxis.renderer.labels.template.textAlign = "middle";
+      categoryAxis.renderer.grid.template.opacity = 0;
 
-      /* FIRST CHART */
-
-      // First Y axis
+      // Y axis
       let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
       valueAxis.tooltip.disabled = true;
       valueAxis.zIndex = 1;
       valueAxis.renderer.baseGrid.disabled = true;
       valueAxis.renderer.fontSize = "0.8em";
       valueAxis.renderer.width = ywidth;
+      valueAxis.fontFamily = "Caveat";
+      valueAxis.renderer.grid.template.strokeWidth = 3;
 
       // Transport
       let series = chart.series.push(new am4charts.ColumnSeries());
@@ -333,7 +345,6 @@ export class ChartService {
       image.horizontalCenter = "middle";
       image.verticalCenter = "middle";
       bullet.locationY = .5;
-      //series.columns.template.fill = color;
 
       // Logement
       series = chart.series.push(new am4charts.ColumnSeries());
@@ -351,17 +362,18 @@ export class ChartService {
       bullet = series.bullets.push(new am4charts.Bullet());
       image = bullet.createChild(am4core.Image);
       image.href = "/assets/icons/appartement.png";
-      image.width = 30;
-      image.height = 30;
+      image.width = 25;
+      image.height = 25;
       image.horizontalCenter = "middle";
       image.verticalCenter = "middle";
       bullet.locationY = .5;
-      //series.columns.template.fill = color;
+
+      this.tempChart.get(modal).push(chart);
 
       /* SECOND CHART */
 
       chart = container.createChild(am4charts.XYChart);
-      chart.height = am4core.percent(40);
+      chart.height = am4core.percent(25);
       chart.numberFormatter.numberFormat = '#€';
 
       chart.data = data;
@@ -376,7 +388,7 @@ export class ChartService {
       categoryAxis.renderer.cellEndLocation = 0.85;
       chart.xAxes.push(categoryAxis);
 
-      // First Y axis
+      // Y axis
       valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
       valueAxis.tooltip.disabled = true;
       valueAxis.zIndex = 1;
@@ -384,6 +396,8 @@ export class ChartService {
       valueAxis.renderer.fontSize = "0.8em";
       valueAxis.renderer.inversed = true;
       valueAxis.renderer.width = ywidth;
+      valueAxis.fontFamily = "Caveat";
+      valueAxis.renderer.grid.template.strokeWidth = 3;
 
       series = chart.series.push(new am4charts.ColumnSeries());
       series.name = "Prix par 200km";
@@ -391,7 +405,7 @@ export class ChartService {
       series.dataFields.categoryX = "name";
       series.stacked = true;
       // Configure columns
-      series.columns.template.width = am4core.percent(barwidth);
+      series.columns.template.width = am4core.percent(100);
       series.columns.template.tooltipText = "[font-size:13px]Prix pour 200km : {valueY}";
       series.columns.template.fillOpacity = .8;
       // Add label
@@ -403,140 +417,26 @@ export class ChartService {
       image.horizontalCenter = "middle";
       image.verticalCenter = "middle";
       bullet.locationY = .5;
-      //series.columns.template.fill = color;
 
       series = chart.series.push(new am4charts.ColumnSeries());
       series.name = "Prix par nuitée";
       series.dataFields.valueY = "costByNight";
       series.dataFields.categoryX = "name";
       // Configure columns
-      series.columns.template.width = am4core.percent(barwidth);
+      series.columns.template.width = am4core.percent(100);
       series.columns.template.tooltipText = "[font-size:13px]Prix par nuit : {valueY}";
       series.columns.template.fillOpacity = .8;
       // Add label
       bullet = series.bullets.push(new am4charts.Bullet());
       image = bullet.createChild(am4core.Image);
       image.href = "/assets/icons/appartement.png";
-      image.width = 20;
-      image.height = 20;
+      image.width = 18;
+      image.height = 18;
       image.horizontalCenter = "middle";
       image.verticalCenter = "middle";
       bullet.locationY = .5;
-      //series.columns.template.fill = color;
 
-
-
-
-      /*if (!this.tempChart.get(modal)) {
-        this.tempChart.set(modal, []);
-      }*/
-
-
-
-      /*am4core.useTheme(am4themes_animated);
-
-// Create chart instance
-var chart = am4core.create(elementId, am4charts.XYChart);
-
-// Add data
-chart.data = [{
-  "date": new Date(2018, 0, 1),
-  "value": 450,
-  "value2": 362,
-  "value3": 699
-}, {
-  "date": new Date(2018, 0, 2),
-  "value": 269,
-  "value2": 450,
-  "value3": 841
-}, {
-  "date": new Date(2018, 0, 3),
-  "value": 700,
-  "value2": 358,
-  "value3": 699
-}, {
-  "date": new Date(2018, 0, 4),
-  "value": 490,
-  "value2": 367,
-  "value3": 500
-}, {
-  "date": new Date(2018, 0, 5),
-  "value": 500,
-  "value2": 485,
-  "value3": 369
-}, {
-  "date": new Date(2018, 0, 6),
-  "value": 550,
-  "value2": 354,
-  "value3": 250
-}, {
-  "date": new Date(2018, 0, 7),
-  "value": 420,
-  "value2": 350,
-  "value3": 600
-}];
-
-// Create axes
-var categoryAxis = chart.xAxes.push(new am4charts.DateAxis());
-categoryAxis.renderer.grid.template.location = 0;
-categoryAxis.renderer.minGridDistance = 30;
-
-
-// Create series
-function createSeriesAndAxis(field, name, topMargin, bottomMargin) {
-  var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-  
-  var series = chart.series.push(new am4charts.ColumnSeries());
-  series.stacked = true;
-  series.dataFields.valueY = field;
-  series.dataFields.dateX = "date";
-  series.name = name;
-  series.tooltipText = "{dateX}: [b]{valueY}[/]";
-  series.strokeWidth = 2;
-  series.yAxis = valueAxis;
-  
-  valueAxis.renderer.line.strokeOpacity = 1;
-  valueAxis.renderer.line.stroke = series.stroke;
-  valueAxis.renderer.grid.template.stroke = series.stroke;
-  valueAxis.renderer.grid.template.strokeOpacity = 0.1;
-  valueAxis.renderer.labels.template.fill = series.stroke;
-  valueAxis.renderer.minGridDistance = 20;
-  valueAxis.align = "right";
-  
-  if (topMargin && bottomMargin) {
-    valueAxis.marginTop = 10;
-    valueAxis.marginBottom = 10;
-  }
-  else {
-    if (topMargin) {
-      valueAxis.marginTop = 20;
-    }
-    if (bottomMargin) {
-      valueAxis.marginBottom = 20;
-    }
-  }
-  
-  var bullet = series.bullets.push(new am4charts.CircleBullet());
-  bullet.circle.stroke = am4core.color("#fff");
-  bullet.circle.strokeWidth = 2;
-}
-
-createSeriesAndAxis("value", "Series #1", false, true);
-createSeriesAndAxis("value2", "Series #2", true, true);
-createSeriesAndAxis("value3", "Series #3", true, false);
-
-chart.legend = new am4charts.Legend();
-chart.cursor = new am4charts.XYCursor();
-
-chart.leftAxesContainer.layout = "vertical";*/
-
-
-
-
-
-      //this.tempChart.get(modal).push(chart);
-
-
+      this.tempChart.get(modal).push(chart);
     });
   }
 
