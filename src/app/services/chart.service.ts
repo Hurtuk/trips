@@ -339,7 +339,7 @@ export class ChartService {
       // Add label
       let bullet = series.bullets.push(new am4charts.Bullet());
       let image = bullet.createChild(am4core.Image);
-      image.href = "/assets/icons/plane.png";
+      image.href = "assets/icons/plane.png";
       image.width = 30;
       image.height = 30;
       image.horizontalCenter = "middle";
@@ -361,7 +361,7 @@ export class ChartService {
       // Add label
       bullet = series.bullets.push(new am4charts.Bullet());
       image = bullet.createChild(am4core.Image);
-      image.href = "/assets/icons/appartement.png";
+      image.href = "assets/icons/appartement.png";
       image.width = 25;
       image.height = 25;
       image.horizontalCenter = "middle";
@@ -411,7 +411,7 @@ export class ChartService {
       // Add label
       bullet = series.bullets.push(new am4charts.Bullet());
       image = bullet.createChild(am4core.Image);
-      image.href = "/assets/icons/plane.png";
+      image.href = "assets/icons/plane.png";
       image.width = 20;
       image.height = 20;
       image.horizontalCenter = "middle";
@@ -429,7 +429,7 @@ export class ChartService {
       // Add label
       bullet = series.bullets.push(new am4charts.Bullet());
       image = bullet.createChild(am4core.Image);
-      image.href = "/assets/icons/appartement.png";
+      image.href = "assets/icons/appartement.png";
       image.width = 18;
       image.height = 18;
       image.horizontalCenter = "middle";
