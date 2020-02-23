@@ -36,8 +36,10 @@ export class ChartService {
 
   public disposeTempChart(chartParent: any) {
     const charts = this.tempChart.get(chartParent);
-    while (charts.length) {
-      charts.pop().dispose();
+    if (charts) {
+      while (charts.length) {
+        charts.pop().dispose();
+      }
     }
   }
 

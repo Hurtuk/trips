@@ -41,12 +41,6 @@ import { CostsComponent } from './modals/costs/costs.component';
     MatDialogModule,
     HttpClientModule
   ],
-  entryComponents: [
-    TripSummaryComponent,
-    CountrySummaryComponent,
-    CitySummaryComponent,
-    CostsComponent
-  ],
   providers: [
     UrlBuilderService
   ],
