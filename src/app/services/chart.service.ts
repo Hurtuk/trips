@@ -81,16 +81,16 @@ export class ChartService {
       // Create the data
       switch (countryCode) {
         case "US":
-          chart.deltaLongitude = 125;
-          chart.homeZoomLevel = 3;
+          chart.deltaLongitude = 120;
+          chart.homeZoomLevel = 3.2;
           break;
         case "RU":
           chart.deltaLongitude = -100;
           chart.homeZoomLevel = 2;
           break;
         case "NZ":
-          chart.deltaLongitude = -170;
-          chart.homeZoomLevel = 9;
+          chart.deltaLongitude = -175;
+          chart.homeZoomLevel = 18;
           break;
         default:
           chart.geodata = am4geodata_worldHigh;
@@ -127,8 +127,6 @@ export class ChartService {
       this.visitedCities.subscribe(cities => {
         imageSeries.data = cities.filter(c => c.country.codeAlpha2 === countryCode);
       });
-      // Avoid manual zoom
-      chart.maxZoomLevel = 1;
     });
   }
 
