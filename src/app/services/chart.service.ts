@@ -279,6 +279,10 @@ export class ChartService {
     this.zone.runOutsideAngular(() => {
       if (!this.tempChart.get(modal)) {
         this.tempChart.set(modal, []);
+      } else {
+        // Doesn't work: see the console
+        this.tempChart.get(modal).forEach(c => c.dispose());
+        this.tempChart.set(modal, []);
       }
 
       am4core.useTheme(am4themes_dataviz);

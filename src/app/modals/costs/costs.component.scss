@@ -39,3 +39,16 @@
 #chart {
     height: 600px;
 }
+
+label {
+    position: absolute !important;
+    bottom: 20px;
+    right: 20px;
+    font-family: "Amatic SC", cursive;
+    font-size: 1.2em;
+    cursor: pointer;
+
+    input {
+        opacity: .7;
+    }
+}
