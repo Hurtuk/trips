@@ -9,4 +9,5 @@ export class City {
     count?: number;
     transport: string;
     showGlobal: boolean;
+    simpleStep?: boolean;
 }

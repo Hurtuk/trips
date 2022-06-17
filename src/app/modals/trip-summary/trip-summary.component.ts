@@ -36,7 +36,7 @@ export class TripSummaryComponent implements SummaryModal {
       .subscribe(t => {
         this.trip = t;
         this.chartService.createTrip(this, 'global-map', this.trip);
-        this.showedCities = this.trip.visits.filter(v => v.startDate != v.endDate || !v.transportBack).map(v => v.city);
+        this.showedCities = this.trip.visits.map(v => ({...v.city, simpleStep: v.simpleStep}));
       });
     this.tripService.getChaptersByTrip(id)
       .subscribe(c => {
@@ -69,7 +69,7 @@ export class TripSummaryComponent implements SummaryModal {
   }
 
   public citiesToString(): string {
-    return this.showedCities.map(v => v.name).join(' — ');
+    return this.showedCities.filter(c => !c.simpleStep).map(v => v.name).join(' — ');
   }
 
   public array(length: number): number[] {

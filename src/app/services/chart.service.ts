@@ -259,12 +259,11 @@ export class ChartService {
       marker.verticalCenter = "bottom";
       imageSeriesTemplate.propertyFields.latitude = "latitude";
       imageSeriesTemplate.propertyFields.longitude = "longitude";
-      differentCities.map(c => {
+      differentCities.forEach(c => {
         let city = imageSeries.mapImages.create();
         city.latitude = c.latitude;
         city.longitude = c.longitude;
         city.tooltipText = c.name;
-        return city;
       });
       // Transport
       this.createTransportCities(
@@ -288,7 +287,21 @@ export class ChartService {
       am4core.useTheme(am4themes_dataviz);
 
       const barwidth = 70, ywidth = 70;
-      const data = costs.map(c => ({name: "[font-family:Caveat]" + c.year + "[/]\n[font-size:18px bold]" + c.cities.join("\n"), transport: c.transportCost, stay: c.stayCost, costByNight: Math.round(c.stayCost / c.days), costByKm: Math.round(c.transportCost / (c.km / 200))}));
+      const data = costs.map(c => {
+        let cityNames = c.cities.filter(cc => !cc.startsWith('~')); // Remove simple steps
+        if (cityNames.find(cn => cn.startsWith('#')) && cityNames.find(cn => !cn.startsWith('#'))) {
+            cityNames = ['France', ...cityNames.filter(cn => !cn.startsWith('#'))]; // Remove France cities
+        } else {
+            cityNames = cityNames.map(cn => cn.replace(/^#/, ''));
+        }
+
+        return {
+            name: "[font-family:Caveat]" + c.year + "[/]\n[font-size:18px bold]" + cityNames.join("\n"),
+            transport: c.transportCost,
+            stay: c.stayCost,
+            costByNight: Math.round(c.stayCost / c.days), costByKm: Math.round(c.transportCost / (c.km / 200))
+        };
+        });
 
       let container = am4core.create(elementId, am4core.Container);
       container.width = am4core.percent(100);

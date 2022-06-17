@@ -2,7 +2,7 @@
     <div class="page page-left" id="summary" [class.shown]="currentPage === 1">
         <ng-container *ngIf="trip">
             <h1>{{trip.title}}</h1>
-            <h2>{{citiesToString()}}</h2>
+            <h2 *ngIf="showedCities">{{citiesToString()}}</h2>
             <div class="columns">
                 <span class="calendar">
                     <i class="material-icons">calendar_today</i>

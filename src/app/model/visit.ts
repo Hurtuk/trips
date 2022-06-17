@@ -11,4 +11,5 @@ export class Visit {
     transport: string;
     transportBack?: string;
     cityFrom?: City;
+    simpleStep?: boolean;
 }
