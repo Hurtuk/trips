@@ -4,4 +4,6 @@ export class SimpleTrip {
     cities: string;
     dates: string;
     peopleNb: number;
+    countries: string;
+    countryCodes: string[];
 }

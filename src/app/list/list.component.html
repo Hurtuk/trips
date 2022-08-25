@@ -1,0 +1,25 @@
+<button class="toggler" (click)="isOpen = true">Chronologie</button>
+<aside>
+    <ul *ngIf="(trips | async) as tr">
+        <li *ngFor="let trip of tr">
+            <a [routerLink]="'/trip/' + 2">
+                <div class="flags">
+                    <img *ngFor="let f of trip.countryCodes" [src]="'../../assets/flags/' + f.toLowerCase() + '.svg'" />
+                </div>
+                <div class="data">
+                    <span class="dates">{{ trip.dates }}</span>
+                    <span class="title">{{ trip.title }}</span>
+                    <span class="cities">{{ trip.cities }}</span>
+                </div>
+                <div class="people">
+                    <ng-container *ngIf="trip.peopleNb < 5">
+                        <i *ngFor="let i of array(trip.peopleNb)" class="material-icons">person</i>
+                    </ng-container>
+                    <ng-container *ngIf="trip.peopleNb >= 5">
+                        <span>{{trip.peopleNb}}</span><i class="material-icons">person</i>
+                    </ng-container>
+                </div>
+            </a>
+        </li>
+    </ul>
+</aside>

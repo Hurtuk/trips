@@ -1,0 +1,58 @@
+.toggler {
+    position: absolute;
+    top: 0;
+    left: .5rem;
+    font-family: "Amatic SC", cursive;
+    background: url(../../assets/brush.png) no-repeat center center;
+    background-size: contain;
+    color: white;
+    border: 0;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: .5rem 2.5rem .75rem 1.5rem;
+    opacity: .87;
+}
+
+aside {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow: auto;
+    width: 400px;
+    background-color: yellow;
+    padding: 1rem;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+}
+
+a span {
+    display: block;
+}
+
+.data {
+    flex: 1;
+}
+
+.flags img {
+    width: 25px;
+    display: block;
+}
+
+.dates {
+    font-size: .85rem;
+    font-style: italic;
+}

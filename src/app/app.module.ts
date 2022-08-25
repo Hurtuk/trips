@@ -19,6 +19,7 @@ import { CitySummaryComponent } from './modals/city-summary/city-summary.compone
 import { Nl2pPipe } from './pipes/nl2p.pipe';
 import { PhotoComponent } from './photo/photo.component';
 import { CostsComponent } from './modals/costs/costs.component';
+import { ListComponent } from './list/list.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { CostsComponent } from './modals/costs/costs.component';
     CitySummaryComponent,
     Nl2pPipe,
     PhotoComponent,
-    CostsComponent
+    CostsComponent,
+    ListComponent
   ],
   imports: [
     BrowserModule,

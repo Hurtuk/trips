@@ -5,6 +5,7 @@ import { Component } from '@angular/core';
   template: `
     <app-world></app-world>
     <router-outlet></router-outlet>
+    <app-list></app-list>
   `,
   styles: []
 })

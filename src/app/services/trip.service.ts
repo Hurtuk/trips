@@ -36,7 +36,7 @@ export class TripService {
     return this.http.get<City>(this.urlBuilder.buildUrl('getCityById', id));
   }
 
-  public getSimpleTrips(type: string, id: string): Observable<SimpleTrip[]> {
+  public getSimpleTrips(type = "", id = ""): Observable<SimpleTrip[]> {
     return this.http.get<SimpleTrip[]>(this.urlBuilder.buildUrl('getSimpleTrips', type, id));
   }
 
