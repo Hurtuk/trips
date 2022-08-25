@@ -16,12 +16,32 @@
 aside {
     position: absolute;
     top: 0;
-    left: 0;
+    left: calc(-425px - 2rem);
     bottom: 0;
     overflow: auto;
-    width: 400px;
-    background-color: yellow;
+    width: 420px;
+    background: url(../../assets/summary-background.jpg) no-repeat center right 16%;
+    background-size: auto 124%;
     padding: 1rem;
+    z-index: 2;
+    transition: left .5s;
+    border-right: 5px solid #653711;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, .15);
+
+    &.opened {
+        left: 0;
+
+        + .overlay {
+            background-color: rgba(0, 0, 0, .3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            cursor: pointer;
+        }
+    }
 }
 
 ul {
@@ -37,9 +57,14 @@ a {
     align-items: center;
     text-decoration: none;
     color: inherit;
+    padding: .75rem .5rem;
+
+    &:hover {
+        background-color: #ffffff55;
+    }
 }
 
-a span {
+a .data span {
     display: block;
 }
 
@@ -48,11 +73,37 @@ a span {
 }
 
 .flags img {
-    width: 25px;
+    width: 20px;
     display: block;
+    margin: 1px 0;
 }
 
-.dates {
-    font-size: .85rem;
-    font-style: italic;
+.dates,
+.cities {
+    font-size: 1rem;
+    //font-style: italic;
+    //font-family: "Caveat", cursive;
+    font-family: "Amatic SC", cursive;
+    font-weight: bold;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-family: "Caveat", cursive;
+    line-height: 1.3rem;
+}
+
+.people {
+    i {
+        margin-left: -12px;
+    }
+    span + i {
+        margin-left: 0;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
 }

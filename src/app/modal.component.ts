@@ -41,8 +41,8 @@ export class ModalComponent implements OnDestroy {
 
       // When router navigates on this component is takes the params and opens up the photo detail modal
       this.currentDialog = this.modalService.open(component, {
-        width: '1000px',
-        height: '650px',
+        width: '1300px',
+        height: '850px',
         maxWidth: '97vw',
         maxHeight: '97vh'
       });

@@ -1,5 +1,5 @@
 <button class="toggler" (click)="isOpen = true">Chronologie</button>
-<aside>
+<aside [class.opened]="isOpen">
     <ul *ngIf="(trips | async) as tr">
         <li *ngFor="let trip of tr">
             <a [routerLink]="'/trip/' + 2">
@@ -9,7 +9,7 @@
                 <div class="data">
                     <span class="dates">{{ trip.dates }}</span>
                     <span class="title">{{ trip.title }}</span>
-                    <span class="cities">{{ trip.cities }}</span>
+                    <span class="cities">{{ trip.countries === 'France' ? trip.cities : trip.countries }}</span>
                 </div>
                 <div class="people">
                     <ng-container *ngIf="trip.peopleNb < 5">
@@ -23,3 +23,4 @@
         </li>
     </ul>
 </aside>
+<div class="overlay" (click)="isOpen = false"></div>
