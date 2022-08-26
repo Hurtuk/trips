@@ -12,14 +12,6 @@
                     <span class="title">{{ trip.title }}</span>
                     <span class="cities">{{ trip.countries === 'France' ? trip.cities : trip.countries }}</span>
                 </div>
-                <div class="people">
-                    <ng-container *ngIf="trip.peopleNb < 5">
-                        <i *ngFor="let i of array(trip.peopleNb)" class="material-icons">person</i>
-                    </ng-container>
-                    <ng-container *ngIf="trip.peopleNb >= 5">
-                        <span>{{trip.peopleNb}}</span><i class="material-icons">person</i>
-                    </ng-container>
-                </div>
             </a>
         </li>
     </ul>

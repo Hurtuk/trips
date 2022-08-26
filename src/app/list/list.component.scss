@@ -111,15 +111,6 @@ a .data span {
     line-height: 1.3rem;
 }
 
-.people {
-    i {
-        margin-left: -12px;
-    }
-    span + i {
-        margin-left: 0;
-    }
-}
-
 ::-webkit-scrollbar {
     width: 0px;
     background: transparent;
