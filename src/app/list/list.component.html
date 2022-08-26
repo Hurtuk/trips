@@ -1,10 +1,11 @@
 <button class="toggler" (click)="isOpen = true">Chronologie</button>
 <aside [class.opened]="isOpen">
+    <h1>Chronologie <button (click)="isOpen = false" class="material-icons btn-close">close</button></h1>
     <ul *ngIf="(trips | async) as tr">
         <li *ngFor="let trip of tr">
-            <a [routerLink]="'/trip/' + 2">
+            <a [routerLink]="'/trip/' + trip.id" [class.first-of-year]="isFirstOfYear(tr, trip)">
                 <div class="flags">
-                    <img *ngFor="let f of trip.countryCodes" [src]="'../../assets/flags/' + f.toLowerCase() + '.svg'" />
+                    <img *ngFor="let f of trip.countryCodes" [src]="'assets/flags/' + f.toLowerCase() + '.svg'" />
                 </div>
                 <div class="data">
                     <span class="dates">{{ trip.dates }}</span>

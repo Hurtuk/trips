@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { SummaryModal } from '../summary-modal';
 import { ChartService } from 'src/app/services/chart.service';
 import { TripService } from 'src/app/services/trip.service';
@@ -20,6 +20,8 @@ export class TripSummaryComponent implements SummaryModal {
   public chaptersByPage = new Map<number, Chapter[]>();
   @ViewChild('bookcontent', { static: true }) section: ElementRef;
   public showedCities: City[];
+
+  public zoomed: string;
 
   constructor(
     private chartService: ChartService,
@@ -100,6 +102,14 @@ export class TripSummaryComponent implements SummaryModal {
       }
     }*/
     return '';
+  }
+
+  @HostListener('window:popstate', ['$event'])
+  onPopState() {
+    if (this.zoomed) {
+      this.zoomed = null;
+      history.pushState(null, null, window.location.pathname);
+    }
   }
 
 }

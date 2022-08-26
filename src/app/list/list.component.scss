@@ -5,7 +5,7 @@
     font-family: "Amatic SC", cursive;
     background: url(../../assets/brush.png) no-repeat center center;
     background-size: contain;
-    color: white;
+    color: beige;
     border: 0;
     font-size: 2rem;
     cursor: pointer;
@@ -20,13 +20,14 @@ aside {
     bottom: 0;
     overflow: auto;
     width: 420px;
-    background: url(../../assets/summary-background.jpg) no-repeat center right 16%;
-    background-size: auto 124%;
+    max-width: calc(100vw - 2rem);
+    background: url(../../assets/wood.jpg);
+    color: white;
     padding: 1rem;
     z-index: 2;
     transition: left .5s;
-    border-right: 5px solid #653711;
     box-shadow: 5px 0 15px rgba(0, 0, 0, .15);
+    font-family: "Caveat", cursive;
 
     &.opened {
         left: 0;
@@ -58,9 +59,25 @@ a {
     text-decoration: none;
     color: inherit;
     padding: .75rem .5rem;
+    position: relative;
 
     &:hover {
         background-color: #ffffff55;
+    }
+
+    &.first-of-year {
+        margin-top: 40px;
+
+        &::before {
+            content: '';
+            display: block;
+            margin: 0 auto;
+            width: 100px;
+            border-top: 1px solid #d3d3d355;
+            position: absolute;
+            top: -20px;
+            left: calc(50% - 50px);
+        }
     }
 }
 
@@ -78,19 +95,19 @@ a .data span {
     margin: 1px 0;
 }
 
-.dates,
+.dates {
+    font-size: .95rem;
+    color: yellow;
+}
+
 .cities {
-    font-size: 1rem;
-    //font-style: italic;
-    //font-family: "Caveat", cursive;
-    font-family: "Amatic SC", cursive;
-    font-weight: bold;
+    font-size: 1.2rem;
+    color: lightgray;
 }
 
 .title {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: bold;
-    font-family: "Caveat", cursive;
     line-height: 1.3rem;
 }
 
@@ -106,4 +123,29 @@ a .data span {
 ::-webkit-scrollbar {
     width: 0px;
     background: transparent;
+}
+
+h1 {
+    font-family: "Amatic SC", cursive;
+    font-size: 2.5rem;
+    margin: 0;
+    margin-bottom: 1rem;
+    font-weight: normal;
+    position: relative;
+    text-align: center;
+}
+
+.btn-close {
+    display: none;
+    right: 0;
+    top: 0;
+    color: beige;
+    font-size: 1em;
+    font-weight: bold;
+    opacity: .5;
+    cursor: pointer;
+    
+    @media (max-width: 800px) {
+        display: block;
+    }
 }

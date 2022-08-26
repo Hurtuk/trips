@@ -22,4 +22,13 @@ export class ListComponent implements OnInit {
     return Array(length);
   }
 
+  public isFirstOfYear(trips: SimpleTrip[], trip: SimpleTrip): boolean {
+    const index = trips.indexOf(trip);
+    return index === 0 || this.getYear(trips[index - 1]) != this.getYear(trip);
+  }
+
+  private getYear(trip: SimpleTrip): string {
+    return trip.dates.slice(-4);
+  }
+
 }
