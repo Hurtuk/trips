@@ -24,7 +24,7 @@ export class CostsComponent implements OnInit, OnDestroy {
   public ngOnInit() {
     this.tripService.getCosts()
       .subscribe(costs => {
-        this.costs = costs;
+        this.costs = costs.filter(c => c.stayCost != 0);
         this.updateCosts();
       });
   }

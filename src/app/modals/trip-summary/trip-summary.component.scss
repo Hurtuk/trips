@@ -275,7 +275,6 @@ i {
 
         app-photo {
             max-width: 70%;
-            cursor: zoom-in;
 
             &:nth-child(even) {
                 align-self: flex-end;
@@ -287,6 +286,15 @@ i {
                 margin-top: -15px;
             }
         }
+    }
+
+    &:not(.multi) {
+        justify-content: center;
+        align-items: center;
+    }
+
+    app-photo {
+        cursor: zoom-in;
     }
 }
 

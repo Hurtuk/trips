@@ -92,8 +92,6 @@ export class ChartService {
           chart.deltaLongitude = -175;
           chart.homeZoomLevel = 18;
           break;
-        default:
-          chart.geodata = am4geodata_worldHigh;
       }
       polygonSeries.include = [countryCode];
       polygonSeries.useGeodata = true;
