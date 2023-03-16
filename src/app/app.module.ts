@@ -20,6 +20,7 @@ import { Nl2pPipe } from './pipes/nl2p.pipe';
 import { PhotoComponent } from './photo/photo.component';
 import { CostsComponent } from './modals/costs/costs.component';
 import { ListComponent } from './list/list.component';
+import { BudgetsComponent } from './budgets/budgets.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { ListComponent } from './list/list.component';
     Nl2pPipe,
     PhotoComponent,
     CostsComponent,
-    ListComponent
+    ListComponent,
+    BudgetsComponent
   ],
   imports: [
     BrowserModule,

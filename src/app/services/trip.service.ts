@@ -79,4 +79,8 @@ export class TripService {
   public getCosts(): Observable<Cost[]> {
     return this.http.get<Cost[]>(this.urlBuilder.buildUrl('getCosts'));
   }
+  
+  public getStats(): Observable<{countries: number, cities: number}> {
+    return this.http.get<{countries: number, cities: number}>(this.urlBuilder.buildUrl('getStats'));
+  }
 }

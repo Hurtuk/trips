@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ChartService } from '../services/chart.service';
+import { TripService } from '../services/trip.service';
 
 @Component({
   selector: 'app-world',
@@ -8,7 +9,12 @@ import { ChartService } from '../services/chart.service';
 })
 export class WorldComponent implements OnInit {
 
-  constructor(private chartService: ChartService) { }
+  public stats = this.tripService.getStats();
+
+  constructor(
+    private chartService: ChartService,
+    private tripService: TripService
+  ) { }
 
   ngOnInit() {
     this.chartService.buildTheWorld('world');

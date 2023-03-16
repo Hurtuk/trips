@@ -1,2 +1,8 @@
 <div id="world"></div>
+<div class="stats" *ngIf="stats | async as stats">
+    <div>
+        <span>{{ stats.countries }}</span> pays
+    </div>
+    <div>{{ stats.cities }} villes visitées</div>
+</div>
 <a routerLink="/costs"></a>

@@ -1,3 +1,4 @@
+import { Budget } from './budget';
 import { Visit } from './visit';
 
 export class Trip {
@@ -8,4 +9,5 @@ export class Trip {
     visits: Visit[];
     brought: string;
     transports: string[];
+    budgets: Budget[];
 }
