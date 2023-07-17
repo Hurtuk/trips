@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class UrlBuilderService {
 
-	private urlPrefix = 'http://www.louiecinephile.fr/tripsBO/api/';
+	private urlPrefix = 'https://www.louiecinephile.fr/tripsBO/api/';
 
 	private static replaceContent(source: string, args: any[]) {
 		return source.replace(/{(\d+)}/g,

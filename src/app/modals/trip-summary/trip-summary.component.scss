@@ -1,3 +1,5 @@
+@import '../../../mixins';
+
 :host {
     display: flex;
     flex-direction: column;
@@ -180,8 +182,10 @@ i {
         > div {
             flex: 1;
             overflow-y: scroll;
-            margin-right: -50px;
-            padding-right: 50px;
+            padding-right: 1em;
+            padding-left: 1em;
+
+            @include custom-scrollbar;
         }
     }
 
@@ -331,6 +335,7 @@ i {
     }
 }
 
-.close-btn {
+.btn-close {
     z-index: 2;
+    cursor: pointer;
 }

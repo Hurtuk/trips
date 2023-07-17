@@ -44,7 +44,7 @@
             <!-- Chapter content -->
             <div>
                 <div class="mobile-scroll">
-                    <app-budgets [trip]="trip" *ngIf="chapter.number == 1 && trip.budgets.length > 0"></app-budgets>
+                    <app-budgets [trip]="trip" *ngIf="chapter.number == 1 && trip?.budgets?.length > 0"></app-budgets>
                     <h3>Chapitre {{ chapter.number }}</h3>
                     <h4>{{ chapter.title }}</h4>
                     <div class="infos" *ngIf="chapter.transports.length || chapter.city">

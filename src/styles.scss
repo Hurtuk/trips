@@ -30,6 +30,7 @@ mat-dialog-container {
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column;
+    background: transparent;
 
     > * {
         flex: 1;

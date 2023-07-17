@@ -6,9 +6,7 @@
     .calendar {
         font-size: 1.1em;
     }
-}
 
-@media (max-width: 600px) {
     .chapter {
         display: flex;
         position: relative;
@@ -25,6 +23,13 @@
             .mobile-scroll {
                 max-height: 100%;
                 overflow: auto;
+            }
+        }
+
+        article {
+            > div {
+                padding-right: calc(.5em - 5px);
+                padding-left: .5em;
             }
         }
     }
@@ -92,6 +97,14 @@
     .page-left {
         .chapter-number {
             display: none;
+        }
+    }
+}
+
+@media (max-width: 800px) and (min-width: 600px) {
+    :host {
+        &::after {
+            background-size: auto 138%;
         }
     }
 }
