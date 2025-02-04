@@ -6,11 +6,16 @@ import { Trip } from 'src/app/model/trip';
 import { Chapter } from 'src/app/model/chapter';
 import { MatDialogRef } from '@angular/material/dialog';
 import { City } from 'src/app/model/city';
+import { BudgetsComponent } from '../../budgets/budgets.component';
+import { PhotoComponent } from '../../photo/photo.component';
+import { KeyValuePipe } from '@angular/common';
+import { Nl2pPipe } from '../../pipes/nl2p.pipe';
 
 @Component({
-  selector: 'app-trip-summary',
-  templateUrl: './trip-summary.component.html',
-  styleUrls: ['./trip-summary.component.scss', './trip-summary.component.small.scss']
+    selector: 'app-trip-summary',
+    templateUrl: './trip-summary.component.html',
+    styleUrls: ['./trip-summary.component.scss', './trip-summary.component.small.scss'],
+    imports: [BudgetsComponent, PhotoComponent, KeyValuePipe, Nl2pPipe]
 })
 export class TripSummaryComponent implements SummaryModal {
 

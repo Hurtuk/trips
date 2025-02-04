@@ -1,71 +1,109 @@
 <section #bookcontent>
-    <button (click)="close()" class="material-icons btn-close">close</button>
-    <div class="page page-left" id="summary" [class.shown]="currentPage === 1">
-        <ng-container *ngIf="trip">
-            <h1>{{trip.title}}</h1>
-            <h2 *ngIf="showedCities">{{citiesToString()}}</h2>
-            <div class="columns">
-                <span class="calendar">
-                    <i class="material-icons">calendar_today</i>
-                    {{ trip.dates }}
-                </span>
-                <span class="people" [title]="trip.peopleNb > 1 ? trip.peopleNb + ' personnes': 'Solitaire'">
-                    <ng-container *ngIf="trip.peopleNb < 5">
-                        <i *ngFor="let i of array(trip.peopleNb)" class="material-icons">person</i>
-                    </ng-container>
-                    <ng-container *ngIf="trip.peopleNb >= 5">
-                        <span>{{trip.peopleNb}}</span><i class="material-icons">person</i>
-                    </ng-container>
-                </span>
-            </div>
-            <div class="transports">
-                <img src="assets/icons/{{t}}" *ngFor="let t of trip.transports" />
-            </div>
-        </ng-container>
-        <div id="global-map"></div>
+  <button (click)="close()" class="material-icons btn-close">close</button>
+  <div class="page page-left" id="summary" [class.shown]="currentPage === 1">
+    @if (trip) {
+      <h1>{{trip.title}}</h1>
+      @if (showedCities) {
+        <h2>{{citiesToString()}}</h2>
+      }
+      <div class="columns">
+        <span class="calendar">
+          <i class="material-icons">calendar_today</i>
+          {{ trip.dates }}
+        </span>
+        <span class="people" [title]="trip.peopleNb > 1 ? trip.peopleNb + ' personnes': 'Solitaire'">
+          @if (trip.peopleNb < 5) {
+            @for (i of array(trip.peopleNb); track $index) {
+              <i class="material-icons">person</i>
+            }
+          }
+          @if (trip.peopleNb >= 5) {
+            <span>{{trip.peopleNb}}</span><i class="material-icons">person</i>
+          }
+        </span>
+      </div>
+      <div class="transports">
+        @for (t of trip.transports; track $index) {
+          <img src="assets/icons/{{t}}" />
+        }
+      </div>
+    }
+    <div id="global-map"></div>
+  </div>
+  <div class="page page-right chapter" [class.shown]="!chapters || !chapters.length">
+    <div>
+      <div class="mobile-scroll">
+        @if (trip?.budgets.length > 0) {
+          <app-budgets [trip]="trip"></app-budgets>
+        }
+      </div>
     </div>
-    <div class="page page-right chapter" [class.shown]="!chapters || !chapters.length"></div>
-    <ng-container *ngFor="let pageChapter of chaptersByPage | keyvalue; last as isLast">
-        <div *ngFor="let chapter of pageChapter.value; index as i"
-            class="page chapter page-{{ pageChapter.key === 1 ? 'right': ((!isLast && pageChapter.value.length === 1) || chapter.images.length || chapter.from) ? 'double': i % 2 ? 'right': 'left' }}"
-            [class.shown]="pageChapter.key === currentPage">
-            <!-- Page buttons -->
-            <button class="btn-left" type="button" (click)="changePage(currentPage - 1)" *ngIf="currentPage > 1 && i % 2 === 0">
-                <i class="material-icons">keyboard_arrow_left</i>
-            </button>
-            <button class="btn-right" type="button" (click)="changePage(currentPage + 1)" *ngIf="(chapters.length > 1 && currentPage === 1) || (chapter.number < chapters.length && (i % 2 === 1 || chapter.images.length || chapter.from))">
-                <i class="material-icons">keyboard_arrow_right</i>
-            </button>
-            <!-- Photos -->
-            <div class="photo-page" [class.multi]="chapter.images.length > 1 || (chapter.images.length && chapter.from)" [class.shown]="pageChapter.key === currentPage" *ngIf="pageChapter.key > 1 && ((chapter.images && chapter.images.length) || chapter.from)">
-                <div class="map-chapter" id="map-chapter-{{chapter.number}}" *ngIf="chapter.from"></div>
-                <app-photo *ngFor="let photo of chapter.images" [photoUrl]="photo" (click)="zoomed = photo"></app-photo>
-            </div>
-            <!-- Chapter content -->
-            <div>
-                <div class="mobile-scroll">
-                    <app-budgets [trip]="trip" *ngIf="chapter.number == 1 && trip?.budgets.length > 0"></app-budgets>
-                    <h3>Chapitre {{ chapter.number }}</h3>
-                    <h4>{{ chapter.title }}</h4>
-                    <div class="infos" *ngIf="chapter.transports.length || chapter.city">
-                        <span *ngIf="chapter.city"><i class="material-icons">my_location</i> {{ chapter.city.name }}, {{chapter.city.country.name }}</span>
-                        <div *ngIf="chapter.transports.length">
-                            <img src="assets/icons/{{t}}" *ngFor="let t of chapter.transports" />
-                        </div>
-                    </div>
-                    <article>
-                        <div class="chapter-content">
-                            <h5 *ngIf="chapter.date">{{ chapter.date + getDateSuffixe(pageChapter.key, i, chapter.date) }},</h5>
-                            <div [innerHtml]="chapter.content | nl2p"></div>
-                        </div>
-                    </article>
-                </div>
-                <span class="chapter-number">{{ chapter.number }}/{{ chapters.length }}</span>
-            </div>
+  </div>
+  @for (pageChapter of chaptersByPage | keyvalue; track $index; let isLast = $last) {
+    @for (chapter of pageChapter.value; track $index; let i = $index) {
+      <div
+        class="page chapter page-{{ pageChapter.key === 1 ? 'right': ((!isLast && pageChapter.value.length === 1) || chapter.images.length || chapter.from) ? 'double': i % 2 ? 'right': 'left' }}"
+        [class.shown]="pageChapter.key === currentPage">
+        <!-- Page buttons -->
+        @if (currentPage > 1 && i % 2 === 0) {
+          <button class="btn-left" type="button" (click)="changePage(currentPage - 1)">
+            <i class="material-icons">keyboard_arrow_left</i>
+          </button>
+        }
+        @if ((chapters.length > 1 && currentPage === 1) || (chapter.number < chapters.length && (i % 2 === 1 || chapter.images.length || chapter.from))) {
+          <button class="btn-right" type="button" (click)="changePage(currentPage + 1)">
+            <i class="material-icons">keyboard_arrow_right</i>
+          </button>
+        }
+        <!-- Photos -->
+        @if (pageChapter.key > 1 && ((chapter.images && chapter.images.length) || chapter.from)) {
+          <div class="photo-page" [class.multi]="chapter.images.length > 1 || (chapter.images.length && chapter.from)" [class.shown]="pageChapter.key === currentPage">
+            @if (chapter.from) {
+              <div class="map-chapter" id="map-chapter-{{chapter.number}}"></div>
+            }
+            @for (photo of chapter.images; track $index) {
+              <app-photo [photoUrl]="photo" (click)="zoomed = photo"></app-photo>
+            }
+          </div>
+        }
+        <!-- Chapter content -->
+        <div>
+          <div class="mobile-scroll">
+            @if (chapter.number == 1 && trip?.budgets.length > 0) {
+              <app-budgets [trip]="trip"></app-budgets>
+            }
+            <h3>Chapitre {{ chapter.number }}</h3>
+            <h4>{{ chapter.title }}</h4>
+            @if (chapter.transports.length || chapter.city) {
+              <div class="infos">
+                @if (chapter.city) {
+                  <span><i class="material-icons">my_location</i> {{ chapter.city.name }}, {{chapter.city.country.name }}</span>
+                }
+                @if (chapter.transports.length) {
+                  <div>
+                    @for (t of chapter.transports; track $index) {
+                      <img src="assets/icons/{{t}}" />
+                    }
+                  </div>
+                }
+              </div>
+            }
+            <article>
+              <div class="chapter-content">
+                @if (chapter.date) {
+                  <h5>{{ chapter.date + getDateSuffixe(pageChapter.key, i, chapter.date) }},</h5>
+                }
+                <div [innerHtml]="chapter.content | nl2p"></div>
+              </div>
+            </article>
+          </div>
+          <span class="chapter-number">{{ chapter.number }}/{{ chapters.length }}</span>
         </div>
-        <div class="page page-right chapter fake-page"></div>
-    </ng-container>
+      </div>
+    }
+    <div class="page page-right chapter fake-page"></div>
+  }
 </section>
 <div class="overlay" [class.opened]="zoomed" (click)="zoomed = null">
-    <img [src]="zoomed" />
+  <img [src]="zoomed" />
 </div>

@@ -8,7 +8,6 @@ import { SimpleTrip } from '../model/simple-trip';
 import { Trip } from '../model/trip';
 import { Visit } from '../model/visit';
 import { Chapter } from '../model/chapter';
-import { Cost } from '../model/cost';
 
 @Injectable({
   providedIn: 'root'
@@ -74,10 +73,6 @@ export class TripService {
 
   public getChaptersByTrip(idTrip: number): Observable<Chapter[]> {
     return this.http.get<Chapter[]>(this.urlBuilder.buildUrl('getChaptersByTripId', idTrip));
-  }
-
-  public getCosts(): Observable<Cost[]> {
-    return this.http.get<Cost[]>(this.urlBuilder.buildUrl('getCosts'));
   }
   
   public getStats(): Observable<{countries: number, cities: number}> {

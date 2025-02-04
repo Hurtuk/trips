@@ -1,18 +1,20 @@
 <a [routerLink]="'/trip/' + trip.id">
-    <h3>{{ trip.title }}</h3>
-    <h4>{{ trip.cities }}</h4>
-    <div>
-        <span class="calendar">
-            <i class="material-icons">calendar_today</i>
-            {{ trip.dates }}
-        </span>
-        <span class="people" [title]="trip.peopleNb > 1 ? trip.peopleNb + ' personnes': 'Solitaire'">
-            <ng-container *ngIf="trip.peopleNb < 5">
-                <i *ngFor="let i of array(trip.peopleNb)" class="material-icons">person</i>
-            </ng-container>
-            <ng-container *ngIf="trip.peopleNb >= 5">
-                <span>{{trip.peopleNb}}</span><i class="material-icons">person</i>
-            </ng-container>
-        </span>
-    </div>
+  <h3>{{ trip.title }}</h3>
+  <h4>{{ trip.cities }}</h4>
+  <div>
+    <span class="calendar">
+      <i class="material-icons">calendar_today</i>
+      {{ trip.dates }}
+    </span>
+    <span class="people" [title]="trip.peopleNb > 1 ? trip.peopleNb + ' personnes': 'Solitaire'">
+      @if (trip.peopleNb < 5) {
+        @for (i of array(trip.peopleNb); track $index) {
+          <i class="material-icons">person</i>
+        }
+      }
+      @if (trip.peopleNb >= 5) {
+        <span>{{trip.peopleNb}}</span><i class="material-icons">person</i>
+      }
+    </span>
+  </div>
 </a>

@@ -5,11 +5,14 @@ import { ChartService } from 'src/app/services/chart.service';
 import { TripService } from 'src/app/services/trip.service';
 import { SimpleTrip } from 'src/app/model/simple-trip';
 import { MatDialogRef } from '@angular/material/dialog';
+import { PhotoComponent } from '../../photo/photo.component';
+import { TripRecapComponent } from '../trip-recap/trip-recap.component';
 
 @Component({
-  selector: 'app-country-summary',
-  templateUrl: '../summary/summary.component.html',
-  styleUrls: ['../summary/summary.component.scss', '../summary/summary.component.small.scss']
+    selector: 'app-country-summary',
+    templateUrl: '../summary/summary.component.html',
+    styleUrls: ['../summary/summary.component.scss', '../summary/summary.component.small.scss'],
+    imports: [PhotoComponent, TripRecapComponent]
 })
 export class CountrySummaryComponent implements SummaryModal {
 

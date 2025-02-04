@@ -5,11 +5,14 @@ import { TripService } from 'src/app/services/trip.service';
 import { SimpleTrip } from 'src/app/model/simple-trip';
 import { City } from 'src/app/model/city';
 import { MatDialogRef } from '@angular/material/dialog';
+import { PhotoComponent } from '../../photo/photo.component';
+import { TripRecapComponent } from '../trip-recap/trip-recap.component';
 
 @Component({
-  selector: 'app-city-summary',
-  templateUrl: '../summary/summary.component.html',
-  styleUrls: ['../summary/summary.component.scss', '../summary/summary.component.small.scss']
+    selector: 'app-city-summary',
+    templateUrl: '../summary/summary.component.html',
+    styleUrls: ['../summary/summary.component.scss', '../summary/summary.component.small.scss'],
+    imports: [PhotoComponent, TripRecapComponent]
 })
 export class CitySummaryComponent implements SummaryModal {
 

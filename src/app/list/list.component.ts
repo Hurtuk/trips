@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { SimpleTrip } from '../model/simple-trip';
 import { TripService } from '../services/trip.service';
+import { RouterLink } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'app-list',
-  templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss']
+    selector: 'app-list',
+    templateUrl: './list.component.html',
+    styleUrls: ['./list.component.scss'],
+    imports: [RouterLink, AsyncPipe]
 })
 export class ListComponent implements OnInit {
 

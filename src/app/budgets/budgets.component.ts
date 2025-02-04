@@ -2,9 +2,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Trip } from '../model/trip';
 
 @Component({
-  selector: 'app-budgets',
-  templateUrl: './budgets.component.html',
-  styleUrls: ['./budgets.component.scss']
+    selector: 'app-budgets',
+    templateUrl: './budgets.component.html',
+    styleUrls: ['./budgets.component.scss']
 })
 export class BudgetsComponent implements OnInit {
 

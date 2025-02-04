@@ -1,11 +1,17 @@
 <section>
-    <button (click)="close()" class="material-icons btn-close">close</button>
-    <div id="aside">
-        <app-photo *ngIf="photoUrl" [photoUrl]="photoUrl"></app-photo>
-    </div>
-    <div id="trips">
-        <h1>{{entity?.name}}</h1>
-        <h2 *ngIf="entity?.country">{{entity.country.name}}</h2>
-        <app-trip-recap *ngFor="let trip of trips" [trip]="trip"></app-trip-recap>
-    </div>
+  <button (click)="close()" class="material-icons btn-close">close</button>
+  <div id="aside">
+    @if (photoUrl) {
+      <app-photo [photoUrl]="photoUrl"></app-photo>
+    }
+  </div>
+  <div id="trips">
+    <h1>{{entity?.name}}</h1>
+    @if (entity?.country) {
+      <h2>{{entity.country.name}}</h2>
+    }
+    @for (trip of trips; track $index) {
+      <app-trip-recap [trip]="trip"></app-trip-recap>
+    }
+  </div>
 </section>

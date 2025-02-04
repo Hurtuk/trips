@@ -1,13 +1,15 @@
 <h3>Budget{{ trip.peopleNb == 1 ? '' : (' pour ' + trip.peopleNb + ' personnes') }}</h3>
 <div class="table">
-    <div *ngFor="let b of trip.budgets">
-        <span>{{ b.label }}</span>
-        <span></span>
-        <span>{{ b.amount }}&nbsp;€</span>
+  @for (b of trip.budgets; track $index) {
+    <div>
+      <span>{{ b.label }}</span>
+      <span></span>
+      <span>{{ b.amount }}&nbsp;€</span>
     </div>
-    <div class="total">
-        <span>Total</span>
-        <span></span>
-        <span>{{ total() }}&nbsp;€</span>
-    </div>
+  }
+  <div class="total">
+    <span>Total</span>
+    <span></span>
+    <span>{{ total() }}&nbsp;€</span>
+  </div>
 </div>

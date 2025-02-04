@@ -1,8 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({
-  name: 'nl2p'
-})
+@Pipe({ name: 'nl2p' })
 export class Nl2pPipe implements PipeTransform {
 
   transform(value: string): string {

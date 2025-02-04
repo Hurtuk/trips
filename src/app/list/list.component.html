@@ -1,19 +1,25 @@
 <button class="toggler" (click)="isOpen = true">Chronologie</button>
 <aside [class.opened]="isOpen">
-    <h1>Chronologie <button (click)="isOpen = false" class="material-icons btn-close">close</button></h1>
-    <ul *ngIf="(trips | async) as tr">
-        <li *ngFor="let trip of tr">
-            <a [routerLink]="'/trip/' + trip.id" [class.first-of-year]="isFirstOfYear(tr, trip)">
-                <div class="flags">
-                    <img *ngFor="let f of trip.countryCodes" [src]="'assets/flags/' + f.toLowerCase() + '.svg'" />
-                </div>
-                <div class="data">
-                    <span class="dates">{{ trip.dates }}</span>
-                    <span class="title">{{ trip.title }}</span>
-                    <span class="cities">{{ trip.countries === 'France' ? trip.cities : trip.countries }}</span>
-                </div>
-            </a>
+  <h1>Chronologie <button (click)="isOpen = false" class="material-icons btn-close">close</button></h1>
+  @if ((trips | async); as tr) {
+    <ul>
+      @for (trip of tr; track $index) {
+        <li>
+          <a [routerLink]="'/trip/' + trip.id" [class.first-of-year]="isFirstOfYear(tr, trip)">
+            <div class="flags">
+              @for (f of trip.countryCodes; track $index) {
+                <img [src]="'assets/flags/' + f.toLowerCase() + '.svg'" />
+              }
+            </div>
+            <div class="data">
+              <span class="dates">{{ trip.dates }}</span>
+              <span class="title">{{ trip.title }}</span>
+              <span class="cities">{{ trip.countries === 'France' ? trip.cities : trip.countries }}</span>
+            </div>
+          </a>
         </li>
+      }
     </ul>
+  }
 </aside>
 <div class="overlay" (click)="isOpen = false"></div>

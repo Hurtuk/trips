@@ -1,10 +1,10 @@
-@import '../../../mixins';
+@use '../../../mixins' as mixins;
 
 :host {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    margin: -24px;
+    height: calc(100% - 20px);
     position: relative;
     padding: 5px 15px 15px;
     background-color: #653711;
@@ -113,7 +113,8 @@ i {
     justify-content: space-between;
 }
 
-.calendar {
+.calendar,
+.people {
     font-size: 1.4em;
     font-family: 'Caveat', cursive;
 }
@@ -185,7 +186,7 @@ i {
             padding-right: 1em;
             padding-left: 1em;
 
-            @include custom-scrollbar;
+            @include mixins.custom-scrollbar;
         }
     }
 
